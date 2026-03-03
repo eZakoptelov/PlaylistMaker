@@ -30,7 +30,7 @@
             android:layout_marginStart="4dp"
             android:layout_marginTop="4dp"
             android:backgroundTint="@color/white"
-            app:icon="@drawable/ic_vector_buck"
+            app:icon="@drawable/ic_vector_buck_16"
             app:iconTint="@color/black"
             android:contentDescription="@string/buck">
 
@@ -48,13 +48,13 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="21dp"
+            android:layout_marginStart="@dimen/marginStart_16"
+            android:layout_marginTop="@dimen/marginTop_21"
             android:layout_marginEnd="6dp"
             android:layout_marginBottom="11dp"
             android:text="@string/dark_theme"
             android:textColor="@color/black"
-            android:textSize="16sp"
+            android:textSize="@dimen/text_size_16"
             app:drawableEndCompat="@drawable/ic_switch" />
 
 
@@ -67,13 +67,13 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="21dp"
-            android:layout_marginEnd="12dp"
+            android:layout_marginStart="@dimen/marginStart_16"
+            android:layout_marginTop="@dimen/marginTop_21"
+            android:layout_marginEnd="@dimen/marginEnd_12"
             android:text="@string/share_the_app"
             android:textColor="@color/black"
-            android:textSize="16sp"
-            app:drawableEndCompat="@drawable/ic_mode" />
+            android:textSize="@dimen/text_size_16"
+            app:drawableEndCompat="@drawable/ic_mode_24" />
 
     </FrameLayout>
 
@@ -84,13 +84,13 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="21dp"
-            android:layout_marginEnd="12dp"
+            android:layout_marginStart="@dimen/marginStart_16"
+            android:layout_marginTop="@dimen/marginTop_21"
+            android:layout_marginEnd="@dimen/marginEnd_12"
             android:text="@string/write_to_support"
             android:textColor="@color/black"
-            android:textSize="16sp"
-            app:drawableEndCompat="@drawable/ic_2" />
+            android:textSize="@dimen/text_size_16"
+            app:drawableEndCompat="@drawable/ic_support_24" />
     </FrameLayout>
 
     <FrameLayout
@@ -100,13 +100,13 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="21dp"
-            android:layout_marginEnd="12dp"
+            android:layout_marginStart="@dimen/marginStart_16"
+            android:layout_marginTop="@dimen/marginTop_21"
+            android:layout_marginEnd="@dimen/marginEnd_12"
             android:text="@string/user_agreement"
             android:textColor="@color/black"
-            android:textSize="16sp"
-            app:drawableEndCompat="@drawable/light_mode3" />
+            android:textSize="@dimen/text_size_16"
+            app:drawableEndCompat="@drawable/light_mode3_24" />
     </FrameLayout>
 
 
