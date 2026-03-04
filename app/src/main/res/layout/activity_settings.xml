@@ -30,9 +30,11 @@
             android:layout_marginStart="4dp"
             android:layout_marginTop="4dp"
             android:backgroundTint="@color/white"
+            android:contentDescription="@string/buck"
+            android:elevation="0dp"
+            android:stateListAnimator="@null"
             app:icon="@drawable/ic_vector_buck_16"
-            app:iconTint="@color/black"
-            android:contentDescription="@string/buck">
+            app:iconTint="@color/black">
 
         </Button>
 
