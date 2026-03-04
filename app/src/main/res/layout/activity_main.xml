@@ -43,10 +43,9 @@
             android:text="@string/search"
             android:foreground="?attr/selectableItemBackground"
             android:textColor="@color/black"
-            android:textSize="@dimen/text_22"
-            android:textAllCaps="false"
+            android:textSize="22sp"
             app:iconGravity="textStart"
-            app:cornerRadius="@dimen/radius_16"
+            app:cornerRadius="16dp"
             app:icon="@drawable/button_search"
             app:iconTint="@color/black">
 
@@ -62,10 +61,9 @@
             android:text="@string/media_library"
             android:foreground="?attr/selectableItemBackground"
             android:textColor="@color/black"
-            android:textSize="@dimen/text_22"
-            android:textAllCaps="false"
+            android:textSize="22sp"
             app:iconGravity="textStart"
-            app:cornerRadius="@dimen/radius_16"
+            app:cornerRadius="16dp"
             app:icon="@drawable/button_mediateka"
             app:iconTint="@color/black">
 
@@ -80,10 +78,9 @@
             android:backgroundTint="@color/white"
             android:text="@string/settings"
             android:foreground="?attr/selectableItemBackground"            android:textColor="@color/black"
-            android:textSize="@dimen/text_22"
-            android:textAllCaps="false"
+            android:textSize="22sp"
             app:iconGravity="textStart"
-            app:cornerRadius="@dimen/radius_16"
+            app:cornerRadius="16dp"
             app:icon="@drawable/button_settings"
             app:iconTint="@color/black">
 
