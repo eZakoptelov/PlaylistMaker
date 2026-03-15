@@ -1,7 +1,6 @@
 package com.example.playlistmaker
 
 import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
 import android.widget.Button
 import android.widget.TextView
@@ -21,7 +20,7 @@ class SettingsActivity : AppCompatActivity() {
         val backButton = findViewById<Button>(R.id.ic_vector_buck)
         backButton.setOnClickListener {
             finish() // Завершить текущую активность
-            Toast.makeText(this, "Назад", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, getString(R.string.back), Toast.LENGTH_SHORT).show()
         }
 
         // Кнопка шаринга
@@ -35,7 +34,12 @@ class SettingsActivity : AppCompatActivity() {
                 type = "text/plain"
                 putExtra(Intent.EXTRA_TEXT, courseLink)
             }
-            startActivity(Intent.createChooser(shareIntent, "Выберите для отправки:"))
+            startActivity(
+                Intent.createChooser(
+                    shareIntent,
+                    getString(R.string.choose_app_to_share)
+                )
+            )
         }
 
 
@@ -61,7 +65,7 @@ class SettingsActivity : AppCompatActivity() {
 
         val intent = Intent(Intent.ACTION_SENDTO).apply {
             data = "mailto:".toUri()
-            putExtra(Intent.EXTRA_EMAIL, arrayOf(emailAddress))     // Используйте массив здесь!
+            putExtra(Intent.EXTRA_EMAIL, arrayOf(emailAddress))
             putExtra(Intent.EXTRA_SUBJECT, subject)
             putExtra(Intent.EXTRA_TEXT, messageBody)
         }

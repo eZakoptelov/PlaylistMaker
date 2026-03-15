@@ -53,7 +53,7 @@ class SearchActivity : AppCompatActivity() {
     private fun navigateToMainActivity() {
         val mainActivityIntent = Intent(this, MainActivity::class.java)
         startActivity(mainActivityIntent)
-        Toast.makeText(this, "Назад", Toast.LENGTH_SHORT).show()
+        Toast.makeText(this, getString(R.string.back), Toast.LENGTH_SHORT).show()
         finish()
     }
 

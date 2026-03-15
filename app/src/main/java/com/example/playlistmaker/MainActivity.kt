@@ -6,6 +6,7 @@ import android.widget.Button
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 
+
 class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -25,17 +26,17 @@ class MainActivity : AppCompatActivity() {
     private fun setupListeners() {
         findViewById<Button>(R.id.button_search).setOnClickListener {
             startActivity(Intent(this, SearchActivity::class.java))
-            toastMessage("Поиск")
+            toastMessage(getString(R.string.search))
         }
 
         findViewById<Button>(R.id.button_mediateka).setOnClickListener {
             startActivity(Intent(this, MediaActivity::class.java))
-            toastMessage("Медиатека")
+            toastMessage(getString(R.string.media_library))
         }
 
         findViewById<Button>(R.id.button_settings).setOnClickListener {
             startActivity(Intent(this, SettingsActivity::class.java))
-            toastMessage("Настройки")
+            toastMessage(getString(R.string.settings))
         }
     }
 
