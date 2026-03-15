@@ -7,5 +7,21 @@
     <string name="share_the_app" translatable="false">Поделиться приложением</string>
     <string name="write_to_support" translatable="false">Написать в поддержку</string>
     <string name="user_agreement" translatable="false">Пользовательское соглашение</string>
-    <string name="buck" translatable="false">Назад</string>
+    <string name="back" translatable="false">Назад</string>
+    <string name="input_hint" translatable="false">Поиск</string>
+    <string name="cancel" translatable="false">Отмена</string>
+
+
+    <string name="android_course_url" translatable="false">Курс по Android-разработке: %s</string>
+    <string name="course_url" translatable="false">https://praktikum.yandex.ru/android-developer/</string>
+
+    <string name="email_address" translatable="false">Dezakpw@yandex.ru</string>
+    <string name="email_subject" translatable="false">Сообщение разработчикам и разработчицам приложения Playlist Maker</string>
+    <string name="email_body" translatable="false">Спасибо разработчикам и разработчицам за крутое приложение!</string>
+
+
+    <string name="agreement_url" translatable="false">https://yandex.ru/legal/practicum_offer/ru/</string>
+
+    <string name="choose_app_to_share">Выберите приложение для отправки:</string>
+
 </resources>

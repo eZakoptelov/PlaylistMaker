@@ -1,19 +1,56 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MediaActivity">
+    android:orientation="vertical"
+    android:theme="@style/Theme.PlaylistMaker.">
 
-    <TextView
-        android:id="@+id/button_search"
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:gravity="center"
-        android:text=" Здесь ничего нет! )"
-        android:textSize="30sp">
+        android:layout_height="@dimen/layout_height_56">
 
-    </TextView>
+        <TextView
+            style="@style/TextViewSearch"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
 
-</FrameLayout>
+        </TextView>
+
+        <Button
+            android:id="@+id/ic_vector_buck"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_marginStart="4dp"
+            android:layout_marginTop="4dp"
+            style="@style/BackButtonStyle">
+
+        </Button>
+    </FrameLayout>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="52dp">
+
+        <EditText
+            android:id="@+id/inputEditText"
+            style="@style/EditTextSearch"
+            android:layout_width="match_parent"
+            android:layout_height="36dp"
+            android:autofillHints="text"
+            tools:ignore="LabelFor"/>
+
+        <ImageButton
+            android:id="@+id/imageButtonSearchClear"
+            style="@style/ButtonCancelSearch"
+            android:layout_width="@dimen/layout_width_40"
+            android:layout_height="wrap_content"
+            android:contentDescription="@string/cancel"
+            app:srcCompat="@drawable/ic_search_clear_16" />
+
+
+    </FrameLayout>
+
+
+</LinearLayout>

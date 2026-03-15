@@ -2,40 +2,45 @@ package com.example.playlistmaker
 
 import android.content.Intent
 import android.os.Bundle
-import android.view.View
 import android.widget.Button
 import android.widget.Toast
-import android.widget.Toast.makeText
 import androidx.appcompat.app.AppCompatActivity
 
+
 class MainActivity : AppCompatActivity() {
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        val buttonSearch = findViewById<Button>(R.id.button_search)
-        buttonSearch.setOnClickListener(View.OnClickListener { view ->
-            val searchIntent = Intent(this, SearchActivity::class.java)
-            startActivity(searchIntent)
-            makeText(this@MainActivity, "Поиск", Toast.LENGTH_SHORT).show()
-        })
+        bindViews()
+        setupListeners()
+    }
 
-        val buttonMediateka = findViewById<Button>(R.id.button_mediateka)
-        buttonMediateka.setOnClickListener {
-            val mediaIntent = Intent(this, MediaActivity::class.java)
-            startActivity(mediaIntent)
-            makeText(this@MainActivity, "Медиатека", Toast.LENGTH_SHORT).show()
+    private fun bindViews() {
+        findViewById<Button>(R.id.button_search)
+        findViewById<Button>(R.id.button_mediateka)
+        findViewById<Button>(R.id.button_settings)
+    }
+
+    private fun setupListeners() {
+        findViewById<Button>(R.id.button_search).setOnClickListener {
+            startActivity(Intent(this, SearchActivity::class.java))
+            toastMessage(getString(R.string.search))
         }
 
-
-        val buttonSettings = findViewById<Button>(R.id.button_settings)
-        buttonSettings.setOnClickListener {
-            val settingIntent = Intent(this, SettingsActivity::class.java)
-            startActivity(settingIntent)
-                makeText(this@MainActivity, "Настройки", Toast.LENGTH_SHORT).show()
-
+        findViewById<Button>(R.id.button_mediateka).setOnClickListener {
+            startActivity(Intent(this, MediaActivity::class.java))
+            toastMessage(getString(R.string.media_library))
         }
 
+        findViewById<Button>(R.id.button_settings).setOnClickListener {
+            startActivity(Intent(this, SettingsActivity::class.java))
+            toastMessage(getString(R.string.settings))
+        }
+    }
+
+    private fun toastMessage(text: String) {
+        Toast.makeText(this, text, Toast.LENGTH_SHORT).show()
     }
 }
-
