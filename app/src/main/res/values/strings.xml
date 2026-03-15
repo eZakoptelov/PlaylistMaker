@@ -8,4 +8,18 @@
     <string name="write_to_support" translatable="false">Написать в поддержку</string>
     <string name="user_agreement" translatable="false">Пользовательское соглашение</string>
     <string name="buck" translatable="false">Назад</string>
+    <string name="input_hint">Поиск</string>
+    <string name="cancel">Отмена</string>
+
+
+    <string name="android_course_url">Курс по Android-разработке: %s</string>
+    <string name="course_url">https://praktikum.yandex.ru/android-developer/</string>
+
+    <string name="email_address">Dezakpw@yandex.ru</string>
+    <string name="email_subject">Сообщение разработчикам и разработчицам приложения Playlist Maker</string>
+    <string name="email_body">Спасибо разработчикам и разработчицам за крутое приложение!</string>
+
+
+    <string name="agreement_url">https://yandex.ru/legal/practicum_offer/ru/</string>
+
 </resources>

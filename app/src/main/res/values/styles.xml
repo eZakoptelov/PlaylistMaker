@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+
+    <style name="ButtonTextOneStyle" parent="Widget.MaterialComponents.Button.UnelevatedButton">
+        <item name="android:layout_weight">3</item>
+        <item name="android:backgroundTint">@color/white</item>
+        <item name="android:foreground">?attr/selectableItemBackground</item>
+        <item name="android:textColor">@color/black</item>
+        <item name="android:textSize">@dimen/text_size_22</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="iconGravity">textStart</item>
+        <item name="cornerRadius">@dimen/radius_16</item>
+        <item name="iconTint">@color/black</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:fontFamily">@font/ys_text_medium</item>
+        <item name="android:textFontWeight">500</item>
+    </style>
+
+    <style name="SettingsStyle" parent="Widget.MaterialComponents.TextView">
+        <item name="android:layout_marginStart">@dimen/marginStart_16</item>
+        <item name="android:layout_marginTop">@dimen/marginTop_21</item>
+        <item name="android:textColor">?attr/colorOnPrimary</item>
+        <item name="android:textSize">@dimen/text_size_16</item>
+        <item name="android:layout_marginEnd">@dimen/marginEnd_12</item>
+        <item name="drawableEndCompat">@drawable/ic_switch</item>
+    </style>
+
+
+
+    <style name="BlueBlackStyle" parent="Widget.MaterialComponents.CardView">
+        <item name="android:background">@color/blue</item>
+    </style>
+
+    <style name="BackButtonStyle" parent="Widget.MaterialComponents.Button.Icon">
+        <item name="android:backgroundTint">?attr/colorOnSecondary</item>
+        <item name="android:contentDescription">@string/buck</item>
+        <item name="android:elevation">0dp</item>
+        <item name="android:stateListAnimator">@null</item>
+        <item name="icon">@drawable/ic_vector_buck_16</item>
+
+    </style>
+
+    <style name="EditTextSearch" parent="Widget.MaterialComponents.TextInputLayout.FilledBox.ExposedDropdownMenu">
+        <item name="android:layout_gravity">center_vertical</item>
+        <item name="android:layout_marginStart">@dimen/marginStart_16</item>
+        <item name="android:layout_marginEnd">@dimen/marginEnd_16</item>
+        <item name="android:autofillHints">text</item>
+        <item name="android:background">@drawable/rectangle_search</item>
+        <item name="android:drawableStart">@drawable/ic_search</item>
+        <item name="android:drawablePadding">@dimen/drawablePadding_8</item>
+        <item name="android:paddingStart">@dimen/drawablePaddingStart_12</item>
+        <item name="android:hint">@string/input_hint</item>
+        <item name="android:textColorHint">@color/grey</item>
+        <item name="android:textColor">@color/black</item>
+        <item name="android:inputType">text</item>
+        <item name="android:maxLines">1</item>
+        <item name="android:textSize">@dimen/text_size_16</item>
+        <item name="android:fontFamily">@font/ys_text_regular</item>
+        <item name="android:layout_alignParentStart">true</item>
+        <item name="android:layout_centerVertical">true</item>
+    </style>
+
+    <style name="TextViewSearch" parent="Widget.MaterialComponents.TextView">
+        <item name="android:layout_marginStart">64dp</item>
+        <item name="android:text">@string/input_hint</item>
+        <item name="android:layout_gravity">center_vertical</item>
+        <item name="android:textColor">?attr/colorOnPrimary</item>
+        <item name="android:textSize">@dimen/text_size_22</item>
+        <item name="android:fontFamily">@font/ys_text_regular</item>
+    </style>
+    <style name="ButtonCancelSearch" parent="Widget.MaterialComponents.Button.OutlinedButton">
+        <item name="android:layout_gravity">right|center_vertical</item>
+        <item name="android:layout_marginEnd">16dp</item>
+        <item name="android:backgroundTint">@color/light_grey</item>
+        <item name="android:layout_marginBottom">8dp</item>
+        <item name="android:layout_marginTop">8dp</item>
+
+
+    </style>
+
+</resources>
