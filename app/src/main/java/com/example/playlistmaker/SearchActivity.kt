@@ -2,11 +2,10 @@ package com.example.playlistmaker
 
 import android.content.Intent
 import android.os.Bundle
-import android.text.Editable
-import android.text.TextWatcher
 import android.view.View
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.widget.doOnTextChanged
 
 class SearchActivity : AppCompatActivity() {
 
@@ -14,9 +13,6 @@ class SearchActivity : AppCompatActivity() {
     private lateinit var clearButton: ImageButton
     private lateinit var backButton: Button
 
-    companion object {
-        const val SEARCH_TEXT = "search_text"
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -34,15 +30,9 @@ class SearchActivity : AppCompatActivity() {
         }
 
         // Настройка кнопки очистки
-        editText.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                clearButton.visibility = if (s.isNullOrBlank()) View.GONE else View.VISIBLE
-            }
-
-            override fun afterTextChanged(s: Editable?) {}
-        })
+        editText.doOnTextChanged { text, _, _, _ ->
+            clearButton.visibility = if (text.isNullOrBlank()) View.GONE else View.VISIBLE
+        }
 
         // Очистим текст при нажатии на кнопку
         clearButton.setOnClickListener {
@@ -69,5 +59,9 @@ class SearchActivity : AppCompatActivity() {
     override fun onRestoreInstanceState(savedInstanceState: Bundle) {
         super.onRestoreInstanceState(savedInstanceState)
         restoreSearchText(savedInstanceState)
+    }
+
+    companion object {
+        const val SEARCH_TEXT = "search_text"
     }
 }
