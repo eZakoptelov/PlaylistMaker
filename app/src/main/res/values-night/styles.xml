@@ -11,9 +11,18 @@
         <item name="drawableEndCompat">@drawable/ic_switch_dark</item>
     </style>
 
+    <style name="BackButtonStyle" parent="Widget.MaterialComponents.Button.Icon">
+        <item name="android:backgroundTint">@color/light_black</item>
+        <item name="android:contentDescription">@string/back</item>
+        <item name="android:elevation">0dp</item>
+        <item name="android:stateListAnimator">@null</item>
+        <item name="icon">@drawable/ic_vector_buck_16</item>
+
+    </style>
+
 
     <style name="BlueBlackStyle" parent="Widget.MaterialComponents.CardView">
-        <item name="android:background">@color/black</item>
+        <item name="android:background">@color/light_black</item>
     </style>
 
 
@@ -26,7 +35,7 @@
         <item name="android:drawablePadding">@dimen/drawablePadding_8</item>
         <item name="android:paddingStart">@dimen/drawablePaddingStart_12</item>
         <item name="android:hint">@string/input_hint</item>
-        <item name="android:textColorHint">@color/black</item>
+        <item name="android:textColorHint">@color/light_black</item>
         <item name="android:textColor">@color/black</item>
         <item name="android:inputType">text</item>
         <item name="android:maxLines">1</item>
@@ -34,6 +43,10 @@
         <item name="android:fontFamily">@font/ys_text_regular</item>
         <item name="android:layout_alignParentStart">true</item>
         <item name="android:layout_centerVertical">true</item>
+    </style>
+
+    <style name="DayNight" parent="Widget.MaterialComponents.CardView">
+        <item name="android:background">@color/light_black</item>
     </style>
 
 
