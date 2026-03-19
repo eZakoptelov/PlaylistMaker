@@ -28,13 +28,12 @@
     </style>
 
 
-
     <style name="BlueBlackStyle" parent="Widget.MaterialComponents.CardView">
         <item name="android:background">@color/blue</item>
     </style>
 
     <style name="BackButtonStyle" parent="Widget.MaterialComponents.Button.Icon">
-        <item name="android:backgroundTint">?attr/colorOnSecondary</item>
+        <item name="android:backgroundTint">@color/white</item>
         <item name="android:contentDescription">@string/back</item>
         <item name="android:elevation">0dp</item>
         <item name="android:stateListAnimator">@null</item>
@@ -70,6 +69,7 @@
         <item name="android:textSize">@dimen/text_size_22</item>
         <item name="android:fontFamily">@font/ys_text_regular</item>
     </style>
+
     <style name="ButtonCancelSearch" parent="Widget.MaterialComponents.Button.OutlinedButton">
         <item name="android:layout_gravity">right|center_vertical</item>
         <item name="android:layout_marginEnd">16dp</item>
@@ -77,7 +77,10 @@
         <item name="android:layout_marginBottom">8dp</item>
         <item name="android:layout_marginTop">8dp</item>
 
+    </style>
 
+    <style name="DayNight" parent="Widget.MaterialComponents.CardView">
+        <item name="android:background">@color/white</item>
     </style>
 
 </resources>

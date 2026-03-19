@@ -5,7 +5,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:theme="@style/Theme.PlaylistMaker.">
+    android:theme="@style/Theme.PlaylistMaker."
+    style="@style/DayNight">
 
     <FrameLayout
         android:layout_width="match_parent"
@@ -47,6 +48,7 @@
             android:layout_width="@dimen/layout_width_40"
             android:layout_height="wrap_content"
             android:contentDescription="@string/cancel"
+            android:visibility="gone"
             app:srcCompat="@drawable/ic_search_clear_16" />
 
 
