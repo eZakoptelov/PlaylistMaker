@@ -17,7 +17,8 @@ class TrackViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         // Загрузка изображения с помощью Glide
         Glide.with(itemView.context)
             .load(track.artworkUrl100)
-            .placeholder(R.drawable.placeholder)
+            .placeholder(R.drawable.ic_placeholder)
+            .error(R.drawable.ic_placeholder)
             .fitCenter()
             .into(artworkIv)
 
