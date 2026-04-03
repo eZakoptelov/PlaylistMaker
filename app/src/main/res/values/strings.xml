@@ -26,5 +26,6 @@
     <string name="placeHolder">Название композиции (Песня)</string>
     <string name="artistName">Имя исполнителя</string>
     <string name="info">Инфо</string>
+    <string name="artist_icon" />
 
 </resources>
