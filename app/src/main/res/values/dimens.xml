@@ -1,19 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <dimen name="text_size_16">16sp</dimen>
+    <dimen name="text_size_11">11sp</dimen>
+    <dimen name="text_size_22">22sp</dimen>
     <dimen name="marginStart_16">16dp</dimen>
     <dimen name="marginEnd_16">16dp</dimen>
     <dimen name="marginTop_21">21dp</dimen>
     <dimen name="marginTop_8">8dp</dimen>
     <dimen name="marginEnd_12">12dp</dimen>
     <dimen name="radius_16">16dp</dimen>
-    <dimen name="text_size_22">22sp</dimen>
     <dimen name="height_61">61dp</dimen>
     <dimen name="drawablePadding_8">8dp</dimen>
     <dimen name="drawablePaddingStart_12">12dp</dimen>
     <dimen name="layout_width_40">40dp</dimen>
     <dimen name="layout_height_36">36dp</dimen>
     <dimen name="layout_height_56">56dp</dimen>
+    <dimen name="paddingVertical_8">8dp</dimen>
+    <dimen name="paddingStart_8">8dp</dimen>
+    <dimen name="paddingHorizontal_8">8dp</dimen>
 
 
 </resources>

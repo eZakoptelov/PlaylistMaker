@@ -23,5 +23,9 @@
     <string name="agreement_url" translatable="false">https://yandex.ru/legal/practicum_offer/ru/</string>
 
     <string name="choose_app_to_share">Выберите приложение для отправки:</string>
+    <string name="placeHolder">Название композиции (Песня)</string>
+    <string name="artistName">Имя исполнителя</string>
+    <string name="info">Инфо</string>
+    <string name="artist_icon" />
 
 </resources>

@@ -83,4 +83,20 @@
         <item name="android:background">@color/white</item>
     </style>
 
+    <style name="SecondaryText" >
+        <item name="android:textSize">@dimen/text_size_11</item>
+        <item name="android:textColor">@color/grey</item>
+        <item name="android:textFontWeight">400</item>
+        <item name="android:maxLines">1</item>
+        <item name="fontFamily">@font/ys_display_regular</item>
+    </style>
+
+    <style name="TextAppearanceTrackTitle" parent="TextAppearance.AppCompat.Body1">
+        <item name="android:textColor">@color/black</item>
+        <item name="android:textSize">@dimen/text_size_16</item>
+        <item name="android:fontFamily">@font/ys_display_regular</item>
+        <item name="android:textFontWeight">400</item>
+        <item name="android:maxLines">1</item>
+    </style>
+
 </resources>
