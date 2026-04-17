@@ -34,7 +34,7 @@ class SearchActivity : AppCompatActivity() {
     private lateinit var buttonConnection: TextView
 
     // Адаптер и список данных
-    private val tracks = ArrayList<TrackItem>()
+    private val tracks = mutableListOf<TrackItem>()
     private val trackAdapter = TrackAdapter(tracks)
 
     // Переменные для логики повтора запроса
@@ -52,13 +52,6 @@ class SearchActivity : AppCompatActivity() {
         stateErrorConnection = findViewById(R.id.state_error_connection)
         stateNothingFound = findViewById(R.id.state_nothing_found)
         buttonConnection = findViewById(R.id.button_connection)
-
-
-        // Проверяем состояние кнопки
-//        Log.d("BUTTON_STATE", "Видимость: ${buttonConnection.visibility}")
-//        Log.d("BUTTON_STATE", "Кликабельная: ${buttonConnection.isClickable}")
-//        Log.d("BUTTON_STATE", "Фокусная: ${buttonConnection.isFocusable}")
-//        Log.d("BUTTON_STATE", "Включена: ${buttonConnection.isEnabled}")
 
 
         // Обработчик кнопки «Обновить»
@@ -130,12 +123,10 @@ class SearchActivity : AppCompatActivity() {
         restoreSearchText(savedInstanceState)
     }
 
+
     private fun performSearch(apiService: ItunesApi, query: String) {
+        saveSearchQueryAndLog(query)
 
-
-        lastSearchQuery = query // Сохраняем запрос для кнопки "Обновить"
-
-        Log.d("SEARCH_API", "Запрос отправлен: $query")
         apiService.searchSongs(query).enqueue(object : Callback<SearchResponse> {
             override fun onResponse(
                 call: Call<SearchResponse>,
@@ -143,41 +134,66 @@ class SearchActivity : AppCompatActivity() {
             ) {
                 Log.d("SEARCH_API", "Ответ получен: ${response.code()}")
                 if (response.isSuccessful && response.body() != null) {
-                    val searchResponse = response.body()
-                    val trackList = searchResponse?.results
-                    Log.d(
-                        "MY_SEARCH",
-                        "Успешный ответ API, найдено треков: ${trackList?.size ?: 0}"
-                    )
-
-                    trackList?.firstOrNull()?.let { firstTrack ->
-                        Log.d(
-                            "MY_SEARCH",
-                            "Первый трек: ${firstTrack.trackName} by ${firstTrack.artistName}"
-                        )
-                    }
-
-                    if (!trackList.isNullOrEmpty()) {
-                        trackAdapter.submitList(trackList)
-                        Log.d(
-                            "MY_SEARCH",
-                            "Адаптер обновлён, текущий размер списка: ${trackList.size}"
-                        )
-                        showList()  // единственный вызов после обновления данных
-                    } else {
-                        showEmptyState()
-                    }
+                    handleSuccessfulResponse(response)
                 } else {
                     showErrorState()
                 }
             }
 
-
             override fun onFailure(call: Call<SearchResponse>, t: Throwable) {
-                Log.e("SEARCH_API", "Ошибка сети: ${t.message}")
-                showErrorState()
+                handleNetworkError(t)
             }
         })
+    }
+
+    //Обновление UI с результатами
+    private fun updateUIWithResults(trackList: List<TrackItem>?) {
+        if (!trackList.isNullOrEmpty()) {
+            trackAdapter.submitList(trackList)
+            Log.d(
+                "MY_SEARCH",
+                "Адаптер обновлён, текущий размер списка: ${trackList.size}"
+            )
+            showList()
+        } else {
+            showEmptyState()
+        }
+    }
+
+    //Логирование результатов поиска
+    private fun logSearchResults(trackList: List<TrackItem>?) {
+        Log.d(
+            "MY_SEARCH",
+            "Успешный ответ API, найдено треков: ${trackList?.size ?: 0}"
+        )
+
+        trackList?.firstOrNull()?.let { firstTrack ->
+            Log.d(
+                "MY_SEARCH",
+                "Первый трек: ${firstTrack.trackName} by ${firstTrack.artistName}"
+            )
+        }
+    }
+
+    //Обработка ошибки сети
+    private fun handleNetworkError(t: Throwable) {
+        Log.e("SEARCH_API", "Ошибка сети: ${t.message}")
+        showErrorState()
+    }
+
+    //Обработка успешного ответа API
+    private fun handleSuccessfulResponse(response: Response<SearchResponse>) {
+        val searchResponse = response.body()
+        val trackList = searchResponse?.results
+
+        logSearchResults(trackList)
+        updateUIWithResults(trackList)
+    }
+
+    //  Сохранение запроса и логирование
+    private fun saveSearchQueryAndLog(query: String) {
+        lastSearchQuery = query
+        Log.d("SEARCH_API", "Запрос отправлен: $query")
     }
 
 
