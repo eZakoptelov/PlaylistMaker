@@ -1,5 +1,6 @@
 package com.example.playlistmaker
 
+
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
@@ -7,12 +8,14 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.net.toUri
+import com.google.android.material.switchmaterial.SwitchMaterial
 
 class SettingsActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_settings)
+        setupThemeSwitcher()
 
 
         // Кнопка возврата назад
@@ -69,5 +72,13 @@ class SettingsActivity : AppCompatActivity() {
             putExtra(Intent.EXTRA_TEXT, messageBody)
         }
         startActivity(intent)
+    }
+
+    private fun setupThemeSwitcher() {
+        val themeSwitcher = findViewById<SwitchMaterial>(R.id.themeSwitcher)
+        themeSwitcher.isChecked = applicationContext.app.darkTheme
+        themeSwitcher.setOnCheckedChangeListener { _, checked ->
+            applicationContext.app.darkTheme = checked
+        }
     }
 }

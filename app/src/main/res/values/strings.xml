@@ -30,5 +30,6 @@
     <string name="update">Обновить</string>
     <string name="nothing_was_found">Ничего не нашлось\n</string>
     <string name="error_connection">Проблемы со связью \n\n Загрузка не удалась.Проверьте \n подключение к интернету</string>
+    <string name="dark_theme_settings">Тёмная тема</string>
 
 </resources>
