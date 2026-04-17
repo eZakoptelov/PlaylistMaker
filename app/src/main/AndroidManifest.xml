@@ -16,25 +16,26 @@
         <activity
             android:name=".MediaActivity"
             android:exported="true"
-            android:theme="@style/Theme.PlaylistMaker." />
+            android:theme="@style/Theme.PlaylistMaker" />
 
 
         <activity
             android:name=".SearchActivity"
             android:exported="true"
-            android:theme="@style/Theme.PlaylistMaker." />
+            android:theme="@style/Theme.PlaylistMaker"
+            android:configChanges="uiMode" />
 
 
         <activity
             android:name=".SettingsActivity"
             android:exported="true"
-            android:theme="@style/Theme.PlaylistMaker." />
+            android:theme="@style/Theme.PlaylistMaker" />
 
 
         <activity
             android:name=".MainActivity"
             android:exported="true"
-            android:theme="@style/Theme.PlaylistMaker.">
+            android:theme="@style/Theme.PlaylistMaker">
 
 
             <intent-filter>
