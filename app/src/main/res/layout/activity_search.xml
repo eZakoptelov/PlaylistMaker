@@ -14,7 +14,7 @@
         <TextView
             style="@style/TextViewSearch"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content" />
 
         <Button
             android:id="@+id/ic_vector_buck"
@@ -22,7 +22,7 @@
             android:layout_width="48dp"
             android:layout_height="48dp"
             android:layout_marginStart="4dp"
-            android:layout_marginTop="4dp"/>
+            android:layout_marginTop="4dp" />
 
     </FrameLayout>
 
@@ -36,6 +36,8 @@
             android:layout_width="match_parent"
             android:layout_height="36dp"
             android:autofillHints="text"
+            android:imeOptions="actionDone"
+            android:inputType="text"
             tools:ignore="LabelFor" />
 
         <ImageButton
@@ -49,10 +51,63 @@
 
     </FrameLayout>
 
+    <LinearLayout
+        android:id="@+id/state_nothing_found"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:paddingTop="102dp"
+        android:visibility="gone">
+
+        <ImageView
+            style="@style/ImageNothingWasFound_one"
+            android:layout_width="120dp"
+            android:layout_height="120dp" />
+
+        <TextView
+            style="@style/TextViewEmptyState_Two"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/nothing_was_found" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/state_error_connection"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:padding="24dp"
+        android:visibility="gone">
+
+        <ImageView
+            style="@style/ImageConnect"
+            android:layout_width="120dp"
+            android:layout_height="120dp"
+            android:layout_marginTop="102dp" />
+
+        <TextView
+            style="@style/TextViewConnectionText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/error_connection">
+
+        </TextView>
+
+        <TextView
+            android:id="@+id/button_connection"
+            style="@style/ButtonUpdateConnect"
+            android:layout_width="91dp"
+            android:layout_height="36dp"
+            android:text="@string/update" />
+    </LinearLayout>
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/tracksRecyclerView"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1" />
+
 
 </LinearLayout>
