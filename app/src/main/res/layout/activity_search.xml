@@ -110,4 +110,34 @@
         android:layout_weight="1" />
 
 
+    <LinearLayout
+        android:id="@+id/historyContainer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:visibility="gone">
+
+        <TextView
+            android:id="@+id/historyTitle"
+            style="@style/HistoryTitleText"
+            android:layout_width="match_parent"
+            android:layout_height="52dp"
+            android:text="@string/You_were_looking_for" />
+
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/historyRecyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:id="@+id/clearHistoryButton"
+            style="@style/ButtonUpdateConnect"
+            android:layout_width="148dp"
+            android:layout_height="36dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="24dp"
+            android:text="@string/Clear_the_history" />
+    </LinearLayout>
+
 </LinearLayout>

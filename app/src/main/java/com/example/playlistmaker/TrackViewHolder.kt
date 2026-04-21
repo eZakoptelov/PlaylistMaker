@@ -10,7 +10,6 @@ import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import java.util.Locale
 
 class TrackViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-
     private val artworkIv: ImageView = itemView.findViewById(R.id.artworkIv)
     private val trackNameTv: TextView = itemView.findViewById(R.id.trackNameTv)
     private val artistNameTv: TextView = itemView.findViewById(R.id.artistNameTv)
