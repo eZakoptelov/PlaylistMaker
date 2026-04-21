@@ -1,40 +1,37 @@
 package com.example.playlistmaker
 
 import android.app.Application
-import android.content.Context
+import android.content.SharedPreferences
 import androidx.appcompat.app.AppCompatDelegate
 
 class App : Application() {
-    private val prefs by lazy { getSharedPreferences("app_settings", MODE_PRIVATE) }
-
-    var darkTheme: Boolean
-        get() = prefs.getBoolean("dark_theme", false)
-        set(value) {
-            prefs.edit().putBoolean("dark_theme", value).apply()
-            updateTheme(value)
-        }
+    private lateinit var prefs: SharedPreferences
+    var darkTheme = false
 
     override fun onCreate() {
         super.onCreate()
-        // Явно загружаем и применяем сохранённую тему при старте
-        applySavedTheme()
+        prefs = getSharedPreferences("app_settings", MODE_PRIVATE)
+        // Загружаем сохранённую тему или используем значение по умолчанию (false)
+        darkTheme = prefs.getBoolean("dark_theme", false)
+        // Применяем тему при запуске приложения
+        updateTheme(darkTheme)
     }
 
-    private fun applySavedTheme() {
-        val savedTheme = darkTheme // автоматически загрузится из prefs
-        updateTheme(savedTheme)
+    fun switchTheme(darkThemeEnabled: Boolean) {
+        darkTheme = darkThemeEnabled
+        // Сохраняем в SharedPreferences
+        prefs.edit().putBoolean("dark_theme", darkThemeEnabled).apply()
+        // Устанавливаем тему через AppCompatDelegate
+        updateTheme(darkThemeEnabled)
     }
 
     private fun updateTheme(darkThemeEnabled: Boolean) {
         AppCompatDelegate.setDefaultNightMode(
-            if (darkThemeEnabled) AppCompatDelegate.MODE_NIGHT_YES
-            else AppCompatDelegate.MODE_NIGHT_NO
+            if (darkThemeEnabled) {
+                AppCompatDelegate.MODE_NIGHT_YES
+            } else {
+                AppCompatDelegate.MODE_NIGHT_NO
+            }
         )
     }
 }
-
-val Context.app: App
-    get() = when (this) {
-        is App -> this
-        else -> (applicationContext as App)
-    }

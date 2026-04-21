@@ -15,8 +15,16 @@ class SettingsActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_settings)
-        setupThemeSwitcher()
 
+
+        //Кнопка переключения тем(светлая, тёмная)
+        val themeSwitcher = findViewById<SwitchMaterial>(R.id.themeSwitcher)
+        themeSwitcher.isChecked = (applicationContext as App).darkTheme
+
+        // Обработчик изменения состояния переключателя
+        themeSwitcher.setOnCheckedChangeListener { switcher, checked ->
+            (applicationContext as App).switchTheme(checked)
+        }
 
         // Кнопка возврата назад
         val backButton = findViewById<Button>(R.id.ic_vector_buck)
@@ -72,13 +80,5 @@ class SettingsActivity : AppCompatActivity() {
             putExtra(Intent.EXTRA_TEXT, messageBody)
         }
         startActivity(intent)
-    }
-
-    private fun setupThemeSwitcher() {
-        val themeSwitcher = findViewById<SwitchMaterial>(R.id.themeSwitcher)
-        themeSwitcher.isChecked = applicationContext.app.darkTheme
-        themeSwitcher.setOnCheckedChangeListener { _, checked ->
-            applicationContext.app.darkTheme = checked
-        }
     }
 }
