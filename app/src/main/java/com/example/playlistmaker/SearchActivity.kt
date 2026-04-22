@@ -12,7 +12,10 @@ import android.widget.ImageButton
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.core.widget.doOnTextChanged
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -21,6 +24,7 @@ import retrofit2.Callback
 import retrofit2.Response
 
 class SearchActivity : AppCompatActivity() {
+
     private lateinit var historyContainer: LinearLayout
     private lateinit var historyRecyclerView: RecyclerView
     private lateinit var clearHistoryButton: TextView
@@ -44,9 +48,15 @@ class SearchActivity : AppCompatActivity() {
     private var lastSearchQuery: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        Log.d("MY_SEARCH", "--- SearchActivity ЗАПУЩЕН ---")
         super.onCreate(savedInstanceState)
+        enableEdgeToEdge()
         setContentView(R.layout.activity_search)
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.button_search)) { v, insets ->
+            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
+            insets
+        }
+        Log.d("MY_SEARCH", "--- SearchActivity ЗАПУЩЕН ---")
 
         // Инициализация View-элементов
         editText = findViewById(R.id.inputEditText)
@@ -67,8 +77,17 @@ class SearchActivity : AppCompatActivity() {
         historyAdapter = TrackAdapter(emptyList())
         historyRecyclerView.layoutManager = LinearLayoutManager(this)
         historyRecyclerView.adapter = historyAdapter
+
+        //Адаптер истории
         historyAdapter.setOnItemClickListener(object : OnItemClickListener {
             override fun onItemClick(track: TrackItem) {
+                // 1. Сохраняем в историю (поднимаем наверх)
+                searchHistory.addToHistory(track);
+
+                // 2. Заполняем поле ввода названием трека
+                editText.setText(track.trackName);
+
+                // 3. Выполняем поиск по этому названию
                 performSearch(ApiClient.itunesApi, track.trackName)
             }
         })
@@ -76,7 +95,14 @@ class SearchActivity : AppCompatActivity() {
 // Настройка основного адаптера
         tracksRecyclerView.layoutManager = LinearLayoutManager(this)
         tracksRecyclerView.adapter = trackAdapter
-
+        trackAdapter.setOnItemClickListener(object : OnItemClickListener {
+            override fun onItemClick(track: TrackItem) {
+                // Сохраняем выбранный трек в историю
+                searchHistory.addToHistory(track);
+                editText.setText(track.trackName);
+                performSearch(ApiClient.itunesApi, track.trackName)
+            }
+        })
         setupHistoryDisplay()
         setupHistoryClearButton()
         setupSearchFieldListeners()
@@ -88,7 +114,11 @@ class SearchActivity : AppCompatActivity() {
                 val apiService = ApiClient.itunesApi
                 performSearch(apiService, query)
             } ?: run {
-                Toast.makeText(this, "Нет предыдущего запроса для повтора", Toast.LENGTH_SHORT)
+                Toast.makeText(
+                    this,
+                    "Нет предыдущего запроса для повтора",
+                    Toast.LENGTH_SHORT
+                )
                     .show()
             }
         }
@@ -128,7 +158,8 @@ class SearchActivity : AppCompatActivity() {
                     performSearch(apiService, query)
                     hideKeyboard(editText)
                 } else {
-                    Toast.makeText(this, "Введите поисковый запрос", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, "Введите поисковый запрос", Toast.LENGTH_SHORT)
+                        .show()
                 }
                 return@setOnEditorActionListener true
             }
@@ -142,7 +173,6 @@ class SearchActivity : AppCompatActivity() {
 
     private fun performSearch(apiService: ItunesApi, query: String) {
         saveSearchQueryAndLog(query)
-
         apiService.searchSongs(query).enqueue(object : Callback<SearchResponse> {
             override fun onResponse(
                 call: Call<SearchResponse>,
@@ -150,9 +180,8 @@ class SearchActivity : AppCompatActivity() {
             ) {
                 Log.d("SEARCH_API", "Ответ получен: ${response.code()}")
                 if (response.isSuccessful && response.body() != null) {
-                    val trackList = response.body()?.results
-                    // Сохраняем запрос в историю вместо треков
-                    trackList?.firstOrNull()?.let { firstTrack ->
+                  //   Сохраняем только первый трек или выбранный пользователем
+                    response.body()?.results?.firstOrNull()?.let { firstTrack ->
                         searchHistory.addToHistory(firstTrack)
                     }
                     handleSuccessfulResponse(response)
@@ -260,8 +289,10 @@ class SearchActivity : AppCompatActivity() {
             outState.putString(SEARCH_TEXT, searchText)
         }
     }
+
     private fun hideKeyboard(view: View) {
-        val inputMethodManager = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
+        val inputMethodManager =
+            getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
         inputMethodManager.hideSoftInputFromWindow(view.windowToken, 0)
     }
 
@@ -289,21 +320,30 @@ class SearchActivity : AppCompatActivity() {
     private fun setupSearchFieldListeners() {
         editText.setOnFocusChangeListener { _, hasFocus ->
             if (hasFocus) {
-                setupHistoryDisplay() // Показываем историю при фокусе
+                // При получении фокуса показываем историю, если поле пустое/пробелы
+                val currentText = editText.text?.toString() ?: ""
+                if (currentText.isBlank()) {
+                    setupHistoryDisplay()
+                    hideSearchResults()
+                }
+            } else {
+                // При потере фокуса скрываем историю
+                updateHistoryVisibility(false)
             }
         }
 
         editText.doOnTextChanged { text, _, _, _ ->
-            clearButton.visibility = if (text.isNullOrBlank()) View.GONE else View.VISIBLE
+            val stringText = text?.toString() ?: ""
 
-            // Показываем историю, если:
-            // 1) EditText в фокусе
-            // 2) Текст пустой/null
-            if (editText.hasFocus() && text.isNullOrBlank()) {
+            // Показ/скрытие иконки очистки
+            clearButton.visibility = if (stringText.isBlank()) View.GONE else View.VISIBLE
+
+            if (stringText.isBlank() && editText.hasFocus()) {
+                // Поле пустое/пробелы и в фокусе — показываем историю
                 setupHistoryDisplay()
-            }
-            // Скрываем историю, если текст введён
-            else if (editText.hasFocus() && text.toString().isNotBlank()) {
+                hideSearchResults()
+            } else if (stringText.isNotBlank()) {
+                // Введён значимый текст — скрываем историю
                 updateHistoryVisibility(false)
             }
         }
@@ -316,6 +356,12 @@ class SearchActivity : AppCompatActivity() {
             updateHistoryVisibility(false)
             Toast.makeText(this, "История очищена", Toast.LENGTH_SHORT).show()
         }
+    }
+
+    private fun hideSearchResults() {
+        tracksRecyclerView.visibility = View.GONE
+        stateErrorConnection.visibility = View.GONE
+        stateNothingFound.visibility = View.GONE
     }
 
 

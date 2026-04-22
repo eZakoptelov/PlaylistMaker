@@ -10,21 +10,14 @@ class SearchHistory(private val sharedPreferences: SharedPreferences) {
     private val gson = Gson()
     private var cachedHistory: MutableList<TrackItem>? = null
 
-
     fun getHistory(): List<TrackItem> {
-        // Проверяем кэш
         cachedHistory?.let { return it }
 
         val json = sharedPreferences.getString(HISTORY_KEY, null)
         return try {
             if (json != null) {
                 val history = gson.fromJson(json, Array<TrackItem>::class.java).toList().toMutableList()
-                // Обрезаем до MAX_HISTORY_SIZE, если нужно
-                if (history.size > MAX_HISTORY_SIZE) {
-                    history.subList(0, MAX_HISTORY_SIZE).toMutableList().also { cachedHistory = it }
-                } else {
-                    cachedHistory = history
-                }
+                cachedHistory = history
                 history
             } else {
                 emptyList<TrackItem>().also { cachedHistory = it.toMutableList() }
@@ -36,46 +29,43 @@ class SearchHistory(private val sharedPreferences: SharedPreferences) {
     }
 
     fun addToHistory(track: TrackItem) {
-        // Валидация трека
-        if (track.trackName.isBlank()) {
-            Log.w("SEARCH_HISTORY", "Попытка добавить трек с пустым названием")
-            return
-        }
-
         val currentHistory = getHistory().toMutableList()
 
-        // Удаляем дубликаты по trackId
+        // Удаляем существующую запись, если трек уже есть в истории
         currentHistory.removeIf { it.trackId == track.trackId }
 
-        // Добавляем новый трек в начало
+        // Добавляем трек в начало списка
         currentHistory.add(0, track)
 
-        // Ограничиваем размер истории
+        // Ограничиваем размер истории до 10 элементов
         if (currentHistory.size > MAX_HISTORY_SIZE) {
             currentHistory.removeAt(currentHistory.lastIndex)
         }
 
-        // Обновляем кэш
         cachedHistory = currentHistory
 
-        // Сохраняем в SharedPreferences
+        // --- ИСПРАВЛЕННЫЙ БЛОК СОХРАНЕНИЯ ---
+        val editor = sharedPreferences.edit()
         val updatedJson = gson.toJson(currentHistory)
-        sharedPreferences.edit {
-            putString(HISTORY_KEY, updatedJson)
-        }
+        editor.putString(HISTORY_KEY, updatedJson)
+
+        // commit() возвращает boolean (успех/неудача), что полезно для отладки
+        val isSaved = editor.commit()
+        Log.d("SEARCH_HISTORY", "Трек добавлен в историю. Сохранено успешно: $isSaved")
     }
 
     fun clearHistory() {
-        sharedPreferences.edit {
-            remove(HISTORY_KEY)
-        }
+        // Здесь также лучше использовать явный commit для надежности
+        val editor = sharedPreferences.edit()
+        editor.remove(HISTORY_KEY)
+        editor.commit()
+
         cachedHistory = emptyList<TrackItem>().toMutableList()
     }
 
     companion object {
-        private const val HISTORY_KEY = "search_query_history"
+        private const val HISTORY_KEY = "search_track_history"
         private const val MAX_HISTORY_SIZE = 10
     }
 }
-
 
