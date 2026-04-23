@@ -51,7 +51,7 @@ class SearchActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContentView(R.layout.activity_search)
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.button_search)) { v, insets ->
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.search_product)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
@@ -70,6 +70,9 @@ class SearchActivity : AppCompatActivity() {
         historyRecyclerView = findViewById(R.id.historyRecyclerView)
         clearHistoryButton = findViewById(R.id.clearHistoryButton)
 
+        // Явно скрываем историю при старте активности
+        updateHistoryVisibility(false)
+
         // Инициализация истории поиска
         searchHistory = SearchHistory(getSharedPreferences("app_prefs", MODE_PRIVATE))
 
@@ -81,14 +84,8 @@ class SearchActivity : AppCompatActivity() {
         //Адаптер истории
         historyAdapter.setOnItemClickListener(object : OnItemClickListener {
             override fun onItemClick(track: TrackItem) {
-                // 1. Сохраняем в историю (поднимаем наверх)
+                //Сохраняем в историю (поднимаем наверх)
                 searchHistory.addToHistory(track);
-
-                // 2. Заполняем поле ввода названием трека
-                editText.setText(track.trackName);
-
-                // 3. Выполняем поиск по этому названию
-                performSearch(ApiClient.itunesApi, track.trackName)
             }
         })
 
@@ -99,11 +96,8 @@ class SearchActivity : AppCompatActivity() {
             override fun onItemClick(track: TrackItem) {
                 // Сохраняем выбранный трек в историю
                 searchHistory.addToHistory(track);
-                editText.setText(track.trackName);
-                performSearch(ApiClient.itunesApi, track.trackName)
             }
         })
-        setupHistoryDisplay()
         setupHistoryClearButton()
         setupSearchFieldListeners()
 
@@ -180,7 +174,7 @@ class SearchActivity : AppCompatActivity() {
             ) {
                 Log.d("SEARCH_API", "Ответ получен: ${response.code()}")
                 if (response.isSuccessful && response.body() != null) {
-                  //   Сохраняем только первый трек или выбранный пользователем
+                    //   Сохраняем только первый трек или выбранный пользователем
                     response.body()?.results?.firstOrNull()?.let { firstTrack ->
                         searchHistory.addToHistory(firstTrack)
                     }
@@ -278,7 +272,6 @@ class SearchActivity : AppCompatActivity() {
     private fun restoreSearchText(bundle: Bundle?) {
         bundle?.getString(SEARCH_TEXT)?.let {
             editText.setText(it)
-            setupHistoryDisplay()
         }
     }
 
@@ -318,32 +311,36 @@ class SearchActivity : AppCompatActivity() {
     }
 
     private fun setupSearchFieldListeners() {
+        // Обработчик фокуса
         editText.setOnFocusChangeListener { _, hasFocus ->
             if (hasFocus) {
-                // При получении фокуса показываем историю, если поле пустое/пробелы
+                // При получении фокуса: показываем историю, только если текст пуст
                 val currentText = editText.text?.toString() ?: ""
                 if (currentText.isBlank()) {
                     setupHistoryDisplay()
                     hideSearchResults()
                 }
             } else {
-                // При потере фокуса скрываем историю
+                // При потере фокуса: всегда скрываем историю
                 updateHistoryVisibility(false)
             }
         }
 
+        // Обработчик изменения текста
         editText.doOnTextChanged { text, _, _, _ ->
             val stringText = text?.toString() ?: ""
 
             // Показ/скрытие иконки очистки
             clearButton.visibility = if (stringText.isBlank()) View.GONE else View.VISIBLE
 
-            if (stringText.isBlank() && editText.hasFocus()) {
-                // Поле пустое/пробелы и в фокусе — показываем историю
+            // Если поле не в фокусе — не трогаем историю (она уже скрыта)
+            if (!editText.hasFocus()) return@doOnTextChanged
+
+            // Если в фокусе: при пустом тексте показываем историю, иначе скрываем
+            if (stringText.isBlank()) {
                 setupHistoryDisplay()
                 hideSearchResults()
-            } else if (stringText.isNotBlank()) {
-                // Введён значимый текст — скрываем историю
+            } else {
                 updateHistoryVisibility(false)
             }
         }
