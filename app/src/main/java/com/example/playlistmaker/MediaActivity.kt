@@ -9,6 +9,7 @@ import androidx.core.view.WindowInsetsCompat
 class MediaActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         enableEdgeToEdge()
         setContentView(R.layout.activity_media)
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.media_product)) { v, insets ->
