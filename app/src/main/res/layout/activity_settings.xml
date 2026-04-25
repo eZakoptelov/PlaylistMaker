@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/settings_product"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
@@ -13,6 +14,7 @@
         android:layout_height="wrap_content">
 
         <TextView
+            android:id="@+id/button_settings"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="64dp"
@@ -40,16 +42,21 @@
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="@dimen/height_61"
-        android:layout_marginTop="24dp">
+        android:layout_marginTop="24dp"
+        >
 
 
-        <TextView
-            style="@style/SettingsStyle"
+        <com.google.android.material.switchmaterial.SwitchMaterial
+            android:id="@+id/themeSwitcher"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="11dp"
-            android:text="@string/dark_theme" />
-
+            android:layout_height="0dp"
+            android:layout_marginStart="@dimen/marginStart_16"
+            android:layout_marginTop="@dimen/marginTop_21"
+            android:layout_marginEnd="@dimen/marginEnd_12"
+            android:layout_marginHorizontal="60dp"
+            android:textSize="@dimen/text_size_16"
+            android:textColor="?attr/colorOnPrimary"
+            android:text="@string/dark_theme_settings" />
 
     </FrameLayout>
 

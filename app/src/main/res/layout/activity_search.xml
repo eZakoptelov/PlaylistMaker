@@ -2,6 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/search_product"
     style="@style/DayNight"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -12,6 +13,7 @@
         android:layout_height="@dimen/layout_height_56">
 
         <TextView
+            android:id="@+id/button_search"
             style="@style/TextViewSearch"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
@@ -50,6 +52,36 @@
             app:srcCompat="@drawable/ic_search_clear_16" />
 
     </FrameLayout>
+
+    <LinearLayout
+        android:id="@+id/historyContainer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:visibility="gone">
+
+        <TextView
+            android:id="@+id/historyTitle"
+            style="@style/HistoryTitleText"
+            android:layout_width="match_parent"
+            android:layout_height="52dp"
+            android:text="@string/You_were_looking_for" />
+
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/historyRecyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:id="@+id/clearHistoryButton"
+            style="@style/ButtonUpdateConnect"
+            android:layout_width="148dp"
+            android:layout_height="36dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="24dp"
+            android:text="@string/Clear_the_history" />
+    </LinearLayout>
 
     <LinearLayout
         android:id="@+id/state_nothing_found"
@@ -108,6 +140,4 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1" />
-
-
 </LinearLayout>
