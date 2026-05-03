@@ -21,16 +21,16 @@
         <Button
             android:id="@+id/ic_vector_buck"
             style="@style/BackButtonStyle"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:layout_marginStart="4dp"
-            android:layout_marginTop="4dp" />
+            android:layout_width="@dimen/layout_width_48"
+            android:layout_height="@dimen/height_48"
+            android:layout_marginStart="@dimen/marginStart_4"
+            android:layout_marginTop="@dimen/marginTop_4" />
 
     </FrameLayout>
 
     <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="52dp">
+        android:layout_height="@dimen/height_52">
 
         <EditText
             android:id="@+id/inputEditText"
@@ -64,7 +64,7 @@
             android:id="@+id/historyTitle"
             style="@style/HistoryTitleText"
             android:layout_width="match_parent"
-            android:layout_height="52dp"
+            android:layout_height="@dimen/height_52"
             android:text="@string/You_were_looking_for" />
 
 

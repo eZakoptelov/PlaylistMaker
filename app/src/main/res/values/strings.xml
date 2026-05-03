@@ -33,5 +33,13 @@
     <string name="dark_theme_settings">Тёмная тема</string>
     <string name="You_were_looking_for">Вы искали</string>
     <string name="Clear_the_history">Очистить историю</string>
+    <string name="The_name_of_the_song">Название песни</string>
+    <string name="executor">Исполнитель</string>
+    <string name="duration">Длительность</string>
+    <string name="collectionName">Альбом</string>
+    <string name="Date">Год </string>
+    <string name="primaryGenreName">Жанр</string>
+    <string name="country">Страна</string>
+
 
 </resources>

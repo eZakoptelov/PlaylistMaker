@@ -85,9 +85,11 @@ class SearchActivity : AppCompatActivity() {
         historyAdapter.setOnItemClickListener(object : OnItemClickListener {
             override fun onItemClick(track: TrackItem) {
                 //Сохраняем в историю (поднимаем наверх)
-                searchHistory.addToHistory(track);
+                searchHistory.addToHistory(track)
+                openPlayerActivity(track)        // Переходим в плеер
             }
         })
+
 
 // Настройка основного адаптера
         tracksRecyclerView.layoutManager = LinearLayoutManager(this)
@@ -95,7 +97,8 @@ class SearchActivity : AppCompatActivity() {
         trackAdapter.setOnItemClickListener(object : OnItemClickListener {
             override fun onItemClick(track: TrackItem) {
                 // Сохраняем выбранный трек в историю
-                searchHistory.addToHistory(track);
+                searchHistory.addToHistory(track)
+                openPlayerActivity(track)        // Переходим в плеер
             }
         })
         setupHistoryClearButton()
@@ -116,6 +119,7 @@ class SearchActivity : AppCompatActivity() {
                     .show()
             }
         }
+
 
         val apiService = ApiClient.itunesApi
 
@@ -359,6 +363,15 @@ class SearchActivity : AppCompatActivity() {
         tracksRecyclerView.visibility = View.GONE
         stateErrorConnection.visibility = View.GONE
         stateNothingFound.visibility = View.GONE
+    }
+    private fun openPlayerActivity(track: TrackItem) {
+        try {
+            val intent = Intent(this, PlayerActivity::class.java)
+            intent.putExtra("track", track)
+            startActivity(intent)
+        } catch (e: Exception) {
+            Toast.makeText(this, "Ошибка: ${e.message}", Toast.LENGTH_SHORT).show()
+        }
     }
 
 

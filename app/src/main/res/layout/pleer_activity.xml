@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    style="@style/DayNight"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/pleerSong"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/left_guideline"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_begin="24dp" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/right_guideline"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_end="24dp" />
+
+        <Button
+            android:id="@+id/ic_vector_buck"
+            style="@style/BackButtonStyle"
+            android:layout_width="@dimen/layout_width_48"
+            android:layout_height="@dimen/height_48"
+            android:layout_marginStart="@dimen/marginStart_4"
+            android:layout_marginTop="@dimen/marginTop_4"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:pressedTranslationZ="2dp" />
+
+        <!-- Плейсхолдер альбома -->
+        <ImageView
+            android:id="@+id/imageViewPleerPlaceholder"
+            style="@style/ImagePlaceholder"
+            app:layout_constraintEnd_toEndOf="@id/right_guideline"
+            app:layout_constraintStart_toStartOf="@id/left_guideline"
+            app:layout_constraintTop_toBottomOf="@id/ic_vector_buck" />
+
+
+        <TextView
+            android:id="@+id/trackNameTv"
+            style="@style/TextTrackName"
+            android:text="@string/The_name_of_the_song"
+            app:layout_constraintEnd_toEndOf="@id/right_guideline"
+            app:layout_constraintStart_toStartOf="@id/left_guideline"
+            app:layout_constraintTop_toBottomOf="@id/imageViewPleerPlaceholder" />
+
+        <TextView
+            android:id="@+id/artistNameTv"
+            style="@style/TextArtistName"
+            android:text="@string/executor"
+            app:layout_constraintEnd_toEndOf="@id/right_guideline"
+            app:layout_constraintStart_toStartOf="@id/left_guideline"
+            app:layout_constraintTop_toBottomOf="@id/trackNameTv" />
+
+        <!-- Кнопка коллекции -->
+        <ImageButton
+            android:id="@+id/buttonQueue"
+            style="@style/ImageButtonStyle.Queue"
+            app:layout_constraintEnd_toStartOf="@id/buttonPlay"
+            app:layout_constraintHorizontal_chainStyle="spread_inside"
+            app:layout_constraintStart_toStartOf="@id/left_guideline"
+            app:layout_constraintTop_toBottomOf="@id/artistNameTv" />
+
+        <!-- Кнопка воспроизведения -->
+        <ImageButton
+            android:id="@+id/buttonPlay"
+            style="@style/ImageButtonStyle.Play"
+            app:layout_constraintEnd_toStartOf="@id/buttonBorder"
+            app:layout_constraintStart_toEndOf="@id/buttonQueue"
+            app:layout_constraintTop_toBottomOf="@id/artistNameTv" />
+
+
+        <!-- Кнопка избранного -->
+        <ImageButton
+            android:id="@+id/buttonBorder"
+            style="@style/ImageButtonStyle.Favorite"
+            app:layout_constraintEnd_toEndOf="@id/right_guideline"
+            app:layout_constraintStart_toEndOf="@id/buttonPlay"
+            app:layout_constraintTop_toBottomOf="@id/artistNameTv" />
+
+        <!-- Длительность трека -->
+        <TextView
+            android:id="@+id/trackDuration"
+            style="@style/TextTrackDuration"
+            android:layout_height="wrap_content"
+            android:text="04:50"
+            android:textAlignment="center"
+            app:layout_constraintEnd_toEndOf="@id/right_guideline"
+            app:layout_constraintStart_toStartOf="@id/left_guideline"
+            app:layout_constraintTop_toBottomOf="@id/buttonPlay"
+            tools:text="04:56" />
+
+        <!---/////////////////////////////////////////////////////////////// -->
+
+        <!-- Длительность (метка) -->
+        <TextView
+            android:id="@+id/textDuration"
+            style="@style/TextLabel"
+            android:layout_marginTop="30dp"
+            android:text="@string/duration"
+            app:layout_constraintEnd_toStartOf="@id/trackDurationText"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/trackDuration" />
+
+        <TextView
+            android:id="@+id/trackDurationText"
+            style="@style/TextValue"
+            android:layout_marginTop="30dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/textDuration"
+            app:layout_constraintTop_toBottomOf="@id/trackDuration"
+            tools:text="0:30" />
+        <!-- Альбом -->
+        <TextView
+            android:id="@+id/collectionName"
+            style="@style/TextLabel"
+            android:text="@string/collectionName"
+            android:visibility="gone"
+            app:layout_constraintEnd_toStartOf="@id/collectionNameValue"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/textDuration" />
+
+        <TextView
+            android:id="@+id/collectionNameValue"
+            style="@style/TextValue"
+            android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/collectionName"
+            app:layout_constraintTop_toBottomOf="@id/textDuration"
+            tools:text="Альбом" />
+        <!-- Год релиза -->
+        <TextView
+            android:id="@+id/releaseDate"
+            style="@style/TextLabel"
+            android:text="@string/Date"
+            android:visibility="gone"
+            app:layout_constraintEnd_toStartOf="@id/releaseDateValue"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/collectionName" />
+
+        <TextView
+            android:id="@+id/releaseDateValue"
+            style="@style/TextValue"
+            android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/releaseDate"
+            app:layout_constraintTop_toBottomOf="@id/collectionName"
+            tools:text="2026" />
+
+
+        <!-- Жанр -->
+        <TextView
+            android:id="@+id/primaryGenreName"
+            style="@style/TextLabel"
+            android:text="@string/primaryGenreName"
+            app:layout_constraintEnd_toStartOf="@id/primaryGenreValue"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/releaseDate" />
+
+        <TextView
+            android:id="@+id/primaryGenreValue"
+            style="@style/TextValue"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/primaryGenreName"
+            app:layout_constraintTop_toBottomOf="@id/releaseDate"
+            tools:text="Рок" />
+
+        <!-- Страна -->
+        <TextView
+            android:id="@+id/country"
+            style="@style/TextLabel"
+            android:text="@string/country"
+            app:layout_constraintEnd_toStartOf="@id/countryValue"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/primaryGenreName" />
+
+        <TextView
+            android:id="@+id/countryValue"
+            style="@style/TextValue"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/country"
+            app:layout_constraintTop_toBottomOf="@id/primaryGenreName"
+            tools:text="Антрактида" />
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.core.widget.NestedScrollView>
