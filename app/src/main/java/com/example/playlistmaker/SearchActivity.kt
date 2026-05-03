@@ -367,7 +367,7 @@ class SearchActivity : AppCompatActivity() {
     private fun openPlayerActivity(track: TrackItem) {
         try {
             val intent = Intent(this, PlayerActivity::class.java)
-            intent.putExtra("track", track)
+            intent.putExtra(EXTRA_TRACK, track)
             startActivity(intent)
         } catch (e: Exception) {
             Toast.makeText(this, "Ошибка: ${e.message}", Toast.LENGTH_SHORT).show()
@@ -377,5 +377,6 @@ class SearchActivity : AppCompatActivity() {
 
     companion object {
         const val SEARCH_TEXT = "search_text_key"
+            const val EXTRA_TRACK = "track"
+        }
     }
-}

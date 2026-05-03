@@ -233,8 +233,8 @@
         <item name="android:layout_width">0dp</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_marginTop">30dp</item>
-        <item name="android:scaleType">centerCrop</item>
-        <item name="android:src">@drawable/album_placeholder</item>
+        <item name="android:scaleType">center</item>
+        <item name="android:src">@drawable/ic_placeholder</item>
     </style>
 
 

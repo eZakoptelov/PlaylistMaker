@@ -40,7 +40,7 @@ class PlayerActivity : AppCompatActivity() {
         val countryValue = findViewById<TextView>(R.id.countryValue)
         val trackDurationText = findViewById<TextView>(R.id.trackDurationText)
 
-        track = intent.getParcelableExtra("track") ?: run {
+        track = intent.getParcelableExtra(EXTRA_TRACK) ?: run {
             Toast.makeText(this, "Ошибка загрузки трека", Toast.LENGTH_SHORT).show()
             finish()
             return
@@ -49,8 +49,8 @@ class PlayerActivity : AppCompatActivity() {
         // Установка данных
         trackNameTv.text = track.trackName
         artistNameTv.text = track.artistName
-        primaryGenreValue.text = track.primaryGenreName ?: "Не указан"
-        countryValue.text = track.country ?: "Не указана"
+        primaryGenreValue.text = track.primaryGenreName
+        countryValue.text = track.country
         trackDurationText.text = formatDuration(track.trackTimeMillis)
 
         // Условное отображение альбома
@@ -82,14 +82,14 @@ class PlayerActivity : AppCompatActivity() {
     }
 
     private fun loadCoverImage() {
-        if (track.artworkUrl100.isNotEmpty()) {
+        if (track.getCoverArtwork().isNotEmpty()) {
             Glide.with(this)
                 .load(track.getCoverArtwork())
-                .placeholder(R.drawable.album_placeholder)
-                .error(R.drawable.album_placeholder)
+                .placeholder(R.drawable.ic_placeholder)
+                .error(R.drawable.ic_placeholder)
                 .into(imageView)
         } else {
-            imageView.setImageResource(R.drawable.album_placeholder)
+            imageView.setImageResource(R.drawable.ic_placeholder)
         }
     }
 
@@ -104,6 +104,9 @@ class PlayerActivity : AppCompatActivity() {
         val searchIntent = Intent(this, SearchActivity::class.java)
         startActivity(searchIntent)
         finish()
+    }
+    companion object {
+        const val EXTRA_TRACK = "track"
     }
 }
 
