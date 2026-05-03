@@ -5,16 +5,13 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 
-
 interface OnItemClickListener {
     fun onItemClick(track: TrackItem)
 }
 
 class TrackAdapter(initialTracks: List<TrackItem>) : RecyclerView.Adapter<TrackViewHolder>() {
-
     private var itemClickListener: OnItemClickListener? = null
     private val tracks = initialTracks.toMutableList()
-
 
     fun setOnItemClickListener(listener: OnItemClickListener) {
         itemClickListener = listener
@@ -39,8 +36,7 @@ class TrackAdapter(initialTracks: List<TrackItem>) : RecyclerView.Adapter<TrackV
         holder.bind(tracks[position])
 
         holder.itemView.setOnClickListener {
-            val selectedTrack = tracks[position]
-            itemClickListener?.onItemClick(selectedTrack)
+            itemClickListener?.onItemClick(tracks[position])
         }
     }
 
