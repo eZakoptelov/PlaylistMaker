@@ -2,14 +2,14 @@
 <androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    style="@style/DayNight"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/pleerSong"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        style="@style/DayNight">
 
         <androidx.constraintlayout.widget.Guideline
             android:id="@+id/left_guideline"
@@ -40,9 +40,11 @@
         <ImageView
             android:id="@+id/imageViewPleerPlaceholder"
             style="@style/ImagePlaceholder"
+            app:layout_constraintDimensionRatio="1:1"
             app:layout_constraintEnd_toEndOf="@id/right_guideline"
             app:layout_constraintStart_toStartOf="@id/left_guideline"
             app:layout_constraintTop_toBottomOf="@id/ic_vector_buck" />
+
 
 
         <TextView
@@ -65,18 +67,21 @@
         <ImageButton
             android:id="@+id/buttonQueue"
             style="@style/ImageButtonStyle.Queue"
-            app:layout_constraintEnd_toStartOf="@id/buttonPlay"
+            app:layout_constraintEnd_toStartOf="@id/button_pause"
             app:layout_constraintHorizontal_chainStyle="spread_inside"
             app:layout_constraintStart_toStartOf="@id/left_guideline"
             app:layout_constraintTop_toBottomOf="@id/artistNameTv" />
 
-        <!-- Кнопка воспроизведения -->
-        <ImageButton
-            android:id="@+id/buttonPlay"
+        <!-- Кнопка воспроизведения,паузы-->
+        <ToggleButton
+            android:id="@+id/button_pause"
             style="@style/ImageButtonStyle.Play"
             app:layout_constraintEnd_toStartOf="@id/buttonBorder"
             app:layout_constraintStart_toEndOf="@id/buttonQueue"
-            app:layout_constraintTop_toBottomOf="@id/artistNameTv" />
+            app:layout_constraintTop_toBottomOf="@id/artistNameTv"
+            android:background="@drawable/play_pause_selector"
+            android:textOff=""
+            android:textOn=""/>
 
 
         <!-- Кнопка избранного -->
@@ -84,7 +89,7 @@
             android:id="@+id/buttonBorder"
             style="@style/ImageButtonStyle.Favorite"
             app:layout_constraintEnd_toEndOf="@id/right_guideline"
-            app:layout_constraintStart_toEndOf="@id/buttonPlay"
+            app:layout_constraintStart_toEndOf="@id/button_pause"
             app:layout_constraintTop_toBottomOf="@id/artistNameTv" />
 
         <!-- Длительность трека -->
@@ -92,12 +97,24 @@
             android:id="@+id/trackDuration"
             style="@style/TextTrackDuration"
             android:layout_height="wrap_content"
-            android:text="04:50"
             android:textAlignment="center"
             app:layout_constraintEnd_toEndOf="@id/right_guideline"
             app:layout_constraintStart_toStartOf="@id/left_guideline"
-            app:layout_constraintTop_toBottomOf="@id/buttonPlay"
-            tools:text="04:56" />
+            app:layout_constraintTop_toBottomOf="@id/button_pause"
+            tools:text="00:00" />
+
+
+
+        <!-- Отображение текущего времени воспроизведения -->
+        <TextView
+            android:id="@+id/currentTimeText"
+            style="@style/TextTrackDuration"
+            android:layout_height="wrap_content"
+            android:textAlignment="center"
+            android:text="00:00"
+            app:layout_constraintEnd_toEndOf="@id/right_guideline"
+            app:layout_constraintStart_toStartOf="@id/left_guideline"
+            app:layout_constraintTop_toBottomOf="@id/button_pause" />
 
         <!---/////////////////////////////////////////////////////////////// -->
 

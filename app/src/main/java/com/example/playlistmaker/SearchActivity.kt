@@ -187,6 +187,8 @@ class SearchActivity : AppCompatActivity() {
             val isActionDone = actionId == EditorInfo.IME_ACTION_DONE
 
             if (isActionDone) {
+                searchDebounce?.let { handler.removeCallbacks(it) }
+                searchDebounce = null
                 val query = editText.text.toString().trim()
                 lastSearchQuery = query
                 if (query.isNotBlank()) {
