@@ -27,12 +27,13 @@ class PlayerActivity : AppCompatActivity() {
     private var mediaPlayer: MediaPlayer? = null
     private val handler = Handler(Looper.getMainLooper())
     private var isPlaying = false
+    private var searchDebounce: Runnable? = null
     private val updateTimeRunnable = object : Runnable {
         override fun run() {
             if (mediaPlayer?.isPlaying == true) {
                 val currentPosition = mediaPlayer?.currentPosition ?: 0
                 currentTimeText.text = formatDuration(currentPosition.toLong())
-                handler.postDelayed(this, 1000)
+                handler.postDelayed(this, UPDATE_INTERVAL_MS)
             }
         }
     }
@@ -191,11 +192,13 @@ class PlayerActivity : AppCompatActivity() {
         super.onDestroy()
         stopPlayback()
         handler.removeCallbacksAndMessages(null)
+        searchDebounce = null
     }
 
 
     companion object {
         const val EXTRA_TRACK = "track"
+        private const val UPDATE_INTERVAL_MS = 300L
     }
 }
 
