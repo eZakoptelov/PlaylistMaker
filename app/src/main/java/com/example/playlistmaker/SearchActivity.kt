@@ -2,6 +2,8 @@ package com.example.playlistmaker
 
 import android.content.Intent
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import android.view.View
 import android.view.inputmethod.EditorInfo
@@ -10,6 +12,7 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.LinearLayout
+import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
@@ -19,6 +22,7 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.core.widget.doOnTextChanged
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import kotlinx.coroutines.Runnable
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -33,12 +37,11 @@ class SearchActivity : AppCompatActivity() {
     private lateinit var editText: EditText
     private lateinit var clearButton: ImageButton
     private lateinit var backButton: Button
-
     private lateinit var tracksRecyclerView: RecyclerView
     private lateinit var stateErrorConnection: LinearLayout
     private lateinit var stateNothingFound: LinearLayout
-
     private lateinit var buttonConnection: TextView
+    private lateinit var searchProgressBar: ProgressBar
 
     // Адаптер и список данных
     private val tracks = mutableListOf<TrackItem>()
@@ -46,6 +49,10 @@ class SearchActivity : AppCompatActivity() {
 
     // Переменные для логики повтора запроса
     private var lastSearchQuery: String? = null
+    private var searchDebounce: Runnable? = null
+    private val handler = Handler(Looper.getMainLooper())
+    private var lastClickTime: Long = 0
+    private val CLICK_DEBOUNCE_DELAY = 1000L
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -69,6 +76,7 @@ class SearchActivity : AppCompatActivity() {
         historyContainer = findViewById(R.id.historyContainer)
         historyRecyclerView = findViewById(R.id.historyRecyclerView)
         clearHistoryButton = findViewById(R.id.clearHistoryButton)
+        searchProgressBar = findViewById(R.id.progressBar)
 
         // Явно скрываем историю при старте активности
         updateHistoryVisibility(false)
@@ -84,6 +92,9 @@ class SearchActivity : AppCompatActivity() {
         //Адаптер истории
         historyAdapter.setOnItemClickListener(object : OnItemClickListener {
             override fun onItemClick(track: TrackItem) {
+                if (!isClickAllowed()) {
+                    return
+                }
                 //Сохраняем в историю (поднимаем наверх)
                 searchHistory.addToHistory(track)
                 openPlayerActivity(track)        // Переходим в плеер
@@ -96,6 +107,9 @@ class SearchActivity : AppCompatActivity() {
         tracksRecyclerView.adapter = trackAdapter
         trackAdapter.setOnItemClickListener(object : OnItemClickListener {
             override fun onItemClick(track: TrackItem) {
+                if (!isClickAllowed()) {
+                    return
+                }
                 // Сохраняем выбранный трек в историю
                 searchHistory.addToHistory(track)
                 openPlayerActivity(track)        // Переходим в плеер
@@ -109,6 +123,7 @@ class SearchActivity : AppCompatActivity() {
             Log.d("BUTTON", "Клик обработан!")
             lastSearchQuery?.let { query ->
                 val apiService = ApiClient.itunesApi
+                showSearchProgress()
                 performSearch(apiService, query)
             } ?: run {
                 Toast.makeText(
@@ -131,6 +146,28 @@ class SearchActivity : AppCompatActivity() {
         // Настройка кнопки очистки
         editText.doOnTextChanged { text, _, _, _ ->
             clearButton.visibility = if (text.isNullOrBlank()) View.GONE else View.VISIBLE
+            val query = text.toString().trim()
+            if (query.isNotBlank()) {
+                // Отменяем предыдущий отложенный вызов
+
+                searchDebounce?.let { handler.removeCallbacks(it) }
+
+                // Создаём новый Runnable для выполнения поиска
+                searchDebounce = Runnable {
+                    lastSearchQuery = query
+                    performSearch(apiService, query)
+                }
+
+                // Логируем создание нового Runnable
+                Log.d("DEBOUNCE", "Создан новый Runnable для запроса: '$query'")
+
+                // Запланируем выполнение через заданную задержку (безопасный вызов)
+
+               searchDebounce?.let { handler.postDelayed(it,SEARCH_DEBOUNCE_DELAY) }
+            } else {
+                searchDebounce?.let { handler.removeCallbacks(it) }
+                searchDebounce = null
+            }
         }
 
         // Очистим текст при нажатии на кнопку
@@ -171,11 +208,13 @@ class SearchActivity : AppCompatActivity() {
 
     private fun performSearch(apiService: ItunesApi, query: String) {
         saveSearchQueryAndLog(query)
+        showSearchProgress()
         apiService.searchSongs(query).enqueue(object : Callback<SearchResponse> {
             override fun onResponse(
                 call: Call<SearchResponse>,
                 response: Response<SearchResponse>
             ) {
+                hideSearchProgress()
                 Log.d("SEARCH_API", "Ответ получен: ${response.code()}")
                 if (response.isSuccessful && response.body() != null) {
                     //   Сохраняем только первый трек или выбранный пользователем
@@ -189,6 +228,7 @@ class SearchActivity : AppCompatActivity() {
             }
 
             override fun onFailure(call: Call<SearchResponse>, t: Throwable) {
+                hideSearchProgress()
                 handleNetworkError(t)
             }
         })
@@ -364,6 +404,7 @@ class SearchActivity : AppCompatActivity() {
         stateErrorConnection.visibility = View.GONE
         stateNothingFound.visibility = View.GONE
     }
+
     private fun openPlayerActivity(track: TrackItem) {
         try {
             val intent = Intent(this, PlayerActivity::class.java)
@@ -373,10 +414,31 @@ class SearchActivity : AppCompatActivity() {
             Toast.makeText(this, "Ошибка: ${e.message}", Toast.LENGTH_SHORT).show()
         }
     }
+    private fun isClickAllowed(): Boolean {
+        val currentTime = System.currentTimeMillis()
+        return if (currentTime - lastClickTime < CLICK_DEBOUNCE_DELAY) {
+            false
+        } else {
+            lastClickTime = currentTime
+            true
+        }
+    }
+    private fun showSearchProgress() {
+        searchProgressBar.visibility = View.VISIBLE
+        tracksRecyclerView.visibility = View.GONE
+        stateErrorConnection.visibility = View.GONE
+        stateNothingFound.visibility = View.GONE
+    }
+
+    private fun hideSearchProgress() {
+        searchProgressBar.visibility = View.GONE
+    }
+
 
 
     companion object {
         const val SEARCH_TEXT = "search_text_key"
-            const val EXTRA_TRACK = "track"
-        }
+        const val EXTRA_TRACK = "track"
+        const val SEARCH_DEBOUNCE_DELAY = 2000L
     }
+}
