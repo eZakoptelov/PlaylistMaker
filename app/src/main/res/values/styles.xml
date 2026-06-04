@@ -191,8 +191,7 @@
         <item name="android:layout_width">100dp</item>
         <item name="android:layout_height">100dp</item>
         <item name="android:layout_marginTop">30dp</item>
-        <item name="android:background">@android:color/transparent</item>
-        <item name="android:src">@drawable/button_play</item>
+
     </style>
 
     <style name="TextTrackDuration">
@@ -228,14 +227,20 @@
         <item name="android:textSize">@dimen/text_size_22</item>
     </style>
 
-
     <style name="ImagePlaceholder">
         <item name="android:layout_width">0dp</item>
-        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_height">0dp</item>
         <item name="android:layout_marginTop">30dp</item>
-        <item name="android:scaleType">center</item>
+        <item name="android:scaleType">centerCrop</item>
         <item name="android:src">@drawable/ic_placeholder</item>
     </style>
+
+    <style name="ProgressBar.Player" parent="Widget.AppCompat.ProgressBar">
+        <item name="android:layout_width">44dp</item>
+        <item name="android:layout_height">44dp</item>
+        <item name="android:indeterminateTint">@color/blue</item>
+    </style>
+
 
 
 </resources>
