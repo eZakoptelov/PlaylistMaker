@@ -1,4 +1,4 @@
-package com.example.playlistmaker
+package com.example.playlistmaker.presentation.activity
 
 import android.content.Intent
 import android.media.MediaPlayer
@@ -7,7 +7,6 @@ import android.os.Handler
 import android.os.Looper
 import android.view.View
 import android.widget.Button
-import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
@@ -16,6 +15,10 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.bumptech.glide.Glide
+import com.example.playlistmaker.R
+import com.example.playlistmaker.domain.model.TrackItem
+import com.example.playlistmaker.utils.Constants.EXTRA_TRACK
+import com.example.playlistmaker.utils.Constants.UPDATE_INTERVAL_MS
 import java.util.Locale
 
 class PlayerActivity : AppCompatActivity() {
@@ -120,7 +123,7 @@ class PlayerActivity : AppCompatActivity() {
         val totalSeconds = millis / 1000
         val minutes = totalSeconds / 60
         val seconds = totalSeconds % 60
-        return String.format(Locale.getDefault(), "%d:%02d", minutes, seconds)
+        return String.Companion.format(Locale.getDefault(), "%d:%02d", minutes, seconds)
     }
 
     private fun navigateToSearchActivity() {
@@ -145,7 +148,7 @@ class PlayerActivity : AppCompatActivity() {
                 try {
                     setDataSource(track.previewUrl)
                     prepare()
-                } catch (e: Exception) {
+                } catch (_: Exception) {
                     Toast.makeText(this@PlayerActivity, "Ошибка воспроизведения", Toast.LENGTH_SHORT).show()
                     return@apply
                 }
@@ -194,11 +197,4 @@ class PlayerActivity : AppCompatActivity() {
         handler.removeCallbacksAndMessages(null)
         searchDebounce = null
     }
-
-
-    companion object {
-        const val EXTRA_TRACK = "track"
-        private const val UPDATE_INTERVAL_MS = 300L
-    }
 }
-

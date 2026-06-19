@@ -1,5 +1,6 @@
-package com.example.playlistmaker
+package com.example.playlistmaker.presentation.activity
 
+import android.R.attr.track
 import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
@@ -22,10 +23,23 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.core.widget.doOnTextChanged
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import kotlinx.coroutines.Runnable
-import retrofit2.Call
-import retrofit2.Callback
+import com.example.playlistmaker.App
+import com.example.playlistmaker.R
+import com.example.playlistmaker.presentation.adapter.TrackAdapter
+import com.example.playlistmaker.data.dto.SearchResponseDto
+import com.example.playlistmaker.data.mapper.TrackMapper
+import com.example.playlistmaker.data.repository.SearchHistory
+import com.example.playlistmaker.domain.model.TrackItem
+import com.example.playlistmaker.domain.usecase.AddToHistoryUseCase
+import com.example.playlistmaker.domain.usecase.ClearHistoryUseCase
+import com.example.playlistmaker.domain.usecase.GetSearchHistoryUseCase
+import com.example.playlistmaker.domain.usecase.SearchUseCase
+import com.example.playlistmaker.utils.Constants.EXTRA_TRACK
+import com.example.playlistmaker.utils.Constants.SEARCH_DEBOUNCE_DELAY
+import com.example.playlistmaker.utils.Constants.SEARCH_TEXT
 import retrofit2.Response
+import com.example.playlistmaker.presentation.adapter.OnItemClickListener
+
 
 class SearchActivity : AppCompatActivity() {
 
@@ -42,6 +56,12 @@ class SearchActivity : AppCompatActivity() {
     private lateinit var stateNothingFound: LinearLayout
     private lateinit var buttonConnection: TextView
     private lateinit var searchProgressBar: ProgressBar
+    private lateinit var searchUseCase: SearchUseCase
+    private lateinit var getHistoryUseCase: GetSearchHistoryUseCase
+    private lateinit var addToHistoryUseCase: AddToHistoryUseCase
+    private lateinit var clearHistoryUseCase: ClearHistoryUseCase
+    private val trackMapper = TrackMapper()
+
 
     // Адаптер и список данных
     private val tracks = mutableListOf<TrackItem>()
@@ -81,8 +101,11 @@ class SearchActivity : AppCompatActivity() {
         // Явно скрываем историю при старте активности
         updateHistoryVisibility(false)
 
-        // Инициализация истории поиска
-        searchHistory = SearchHistory(getSharedPreferences("app_prefs", MODE_PRIVATE))
+        val useCaseCreator = (applicationContext as App).useCaseCreator
+        searchUseCase = useCaseCreator.createSearchUseCase()
+        getHistoryUseCase = useCaseCreator.createGetSearchHistoryUseCase()
+        addToHistoryUseCase = useCaseCreator.createAddToHistoryUseCase()
+        clearHistoryUseCase = useCaseCreator.createClearHistoryUseCase()
 
         // Настройка адаптера для истории
         historyAdapter = TrackAdapter(emptyList())
@@ -95,26 +118,27 @@ class SearchActivity : AppCompatActivity() {
                 if (!isClickAllowed()) {
                     return
                 }
-                //Сохраняем в историю (поднимаем наверх)
-                searchHistory.addToHistory(track)
-                openPlayerActivity(track)        // Переходим в плеер
+                addToHistoryUseCase.addTrack(track)
+                openPlayerActivity(track) // Переходим в плеер
             }
         })
+
 
 
 // Настройка основного адаптера
         tracksRecyclerView.layoutManager = LinearLayoutManager(this)
         tracksRecyclerView.adapter = trackAdapter
+
         trackAdapter.setOnItemClickListener(object : OnItemClickListener {
             override fun onItemClick(track: TrackItem) {
                 if (!isClickAllowed()) {
                     return
                 }
-                // Сохраняем выбранный трек в историю
-                searchHistory.addToHistory(track)
-                openPlayerActivity(track)        // Переходим в плеер
+                addToHistoryUseCase.addTrack(track)
+                openPlayerActivity(track) // Переходим в плеер
             }
         })
+
         setupHistoryClearButton()
         setupSearchFieldListeners()
 
@@ -122,9 +146,8 @@ class SearchActivity : AppCompatActivity() {
         buttonConnection.setOnClickListener {
             Log.d("BUTTON", "Клик обработан!")
             lastSearchQuery?.let { query ->
-                val apiService = ApiClient.itunesApi
                 showSearchProgress()
-                performSearch(apiService, query)
+                performSearch(query)
             } ?: run {
                 Toast.makeText(
                     this,
@@ -134,9 +157,6 @@ class SearchActivity : AppCompatActivity() {
                     .show()
             }
         }
-
-
-        val apiService = ApiClient.itunesApi
 
         // Настройка поведения кнопки возврата
         backButton.setOnClickListener {
@@ -155,7 +175,7 @@ class SearchActivity : AppCompatActivity() {
                 // Создаём новый Runnable для выполнения поиска
                 searchDebounce = Runnable {
                     lastSearchQuery = query
-                    performSearch(apiService, query)
+                    performSearch(query)
                 }
 
                 // Логируем создание нового Runnable
@@ -163,7 +183,7 @@ class SearchActivity : AppCompatActivity() {
 
                 // Запланируем выполнение через заданную задержку (безопасный вызов)
 
-               searchDebounce?.let { handler.postDelayed(it,SEARCH_DEBOUNCE_DELAY) }
+                searchDebounce?.let { handler.postDelayed(it,SEARCH_DEBOUNCE_DELAY) }
             } else {
                 searchDebounce?.let { handler.removeCallbacks(it) }
                 searchDebounce = null
@@ -182,7 +202,7 @@ class SearchActivity : AppCompatActivity() {
             stateNothingFound.visibility = View.GONE
         }
 
-        editText.setOnEditorActionListener { _, actionId, event ->
+        editText.setOnEditorActionListener { _, actionId, _ ->
             // Проверяем, что нажата либо кнопка "Готово"
             val isActionDone = actionId == EditorInfo.IME_ACTION_DONE
 
@@ -192,7 +212,7 @@ class SearchActivity : AppCompatActivity() {
                 val query = editText.text.toString().trim()
                 lastSearchQuery = query
                 if (query.isNotBlank()) {
-                    performSearch(apiService, query)
+                    performSearch(query)
                     hideKeyboard(editText)
                 } else {
                     Toast.makeText(this, "Введите поисковый запрос", Toast.LENGTH_SHORT)
@@ -208,33 +228,31 @@ class SearchActivity : AppCompatActivity() {
     }
 
 
-    private fun performSearch(apiService: ItunesApi, query: String) {
+    private fun performSearch(query: String) {
         saveSearchQueryAndLog(query)
         showSearchProgress()
-        apiService.searchSongs(query).enqueue(object : Callback<SearchResponse> {
-            override fun onResponse(
-                call: Call<SearchResponse>,
-                response: Response<SearchResponse>
-            ) {
-                hideSearchProgress()
-                Log.d("SEARCH_API", "Ответ получен: ${response.code()}")
-                if (response.isSuccessful && response.body() != null) {
-                    //   Сохраняем только первый трек или выбранный пользователем
-                    response.body()?.results?.firstOrNull()?.let { firstTrack ->
-                        searchHistory.addToHistory(firstTrack)
-                    }
-                    handleSuccessfulResponse(response)
-                } else {
-                    showErrorState()
-                }
+
+        searchUseCase.search(query) { tracks, error ->
+            hideSearchProgress()
+            if (error != null) {
+                showErrorState()
+                return@search
             }
 
-            override fun onFailure(call: Call<SearchResponse>, t: Throwable) {
-                hideSearchProgress()
-                handleNetworkError(t)
+            tracks?.let {
+                // Добавляем первый трек в историю, если он есть
+                it.firstOrNull()?.let { track ->
+                    addToHistoryUseCase.addTrack(track)
+                }
+                updateUIWithResults(it)
+            } ?: run {
+                showEmptyState()
             }
-        })
+        }
     }
+
+
+
 
 
     //Обновление UI с результатами
@@ -253,33 +271,23 @@ class SearchActivity : AppCompatActivity() {
 
     //Логирование результатов поиска
     private fun logSearchResults(trackList: List<TrackItem>?) {
-        Log.d(
-            "MY_SEARCH",
-            "Успешный ответ API, найдено треков: ${trackList?.size ?: 0}"
-        )
-
+        Log.d("MY_SEARCH", "Успешный ответ API, найдено треков: ${trackList?.size ?: 0}")
         trackList?.firstOrNull()?.let { firstTrack ->
-            Log.d(
-                "MY_SEARCH",
-                "Первый трек: ${firstTrack.trackName} by ${firstTrack.artistName}"
-            )
+            Log.d("MY_SEARCH", "Первый трек: ${firstTrack.trackName} by ${firstTrack.artistName}")
         }
     }
 
-    //Обработка ошибки сети
-    private fun handleNetworkError(t: Throwable) {
-        Log.e("SEARCH_API", "Ошибка сети: ${t.message}")
-        showErrorState()
-    }
-
-    //Обработка успешного ответа API
-    private fun handleSuccessfulResponse(response: Response<SearchResponse>) {
+    private fun handleSuccessfulResponse(response: Response<SearchResponseDto>) {
         val searchResponse = response.body()
-        val trackList = searchResponse?.results
+        val trackListDto = searchResponse?.results
+
+        // Преобразуем DTO в доменные объекты
+        val trackList = trackListDto?.map { trackMapper.toDomain(it) }
 
         logSearchResults(trackList)
         updateUIWithResults(trackList)
     }
+
 
     //  Сохранение запроса и логирование
     private fun saveSearchQueryAndLog(query: String) {
@@ -336,20 +344,19 @@ class SearchActivity : AppCompatActivity() {
     }
 
     private fun setupHistoryDisplay() {
-        Log.d("HISTORY", "setupHistoryDisplay вызван")
-        val history = searchHistory.getHistory()
-        Log.d("HISTORY", "Размер истории: ${history.size}")
+        val history = getHistoryUseCase.getHistory()
+        historyAdapter.submitList(history)
 
+        updateHistoryList(history)  // Ошибка: метода нет
         if (history.isNotEmpty()) {
             historyAdapter.submitList(history)
-            Log.d("HISTORY", "Адаптер истории обновлён")
             updateHistoryVisibility(true)
-            Log.d("HISTORY", "История показана")
         } else {
             updateHistoryVisibility(false)
-            Log.d("HISTORY", "История скрыта (пустая)")
         }
     }
+
+
 
 
     private fun updateHistoryVisibility(show: Boolean) {
@@ -395,11 +402,13 @@ class SearchActivity : AppCompatActivity() {
 
     private fun setupHistoryClearButton() {
         clearHistoryButton.setOnClickListener {
-            searchHistory.clearHistory()
+            clearHistoryUseCase.clearHistory()
             updateHistoryVisibility(false)
+            refreshHistoryDisplay() // Обновляем отображение истории
             Toast.makeText(this, "История очищена", Toast.LENGTH_SHORT).show()
         }
     }
+
 
     private fun hideSearchResults() {
         tracksRecyclerView.visibility = View.GONE
@@ -435,12 +444,14 @@ class SearchActivity : AppCompatActivity() {
     private fun hideSearchProgress() {
         searchProgressBar.visibility = View.GONE
     }
+    private fun refreshHistoryDisplay() {
+        val history = getHistoryUseCase.getHistory()
+        historyAdapter.submitList(history)
 
-
-
-    companion object {
-        const val SEARCH_TEXT = "search_text_key"
-        const val EXTRA_TRACK = "track"
-        const val SEARCH_DEBOUNCE_DELAY = 2000L
+        historyAdapter.submitList(history)
+        updateHistoryVisibility(history.isNotEmpty())
+    }
+    private fun updateHistoryList(history: List<TrackItem>) {
+        historyAdapter.submitList(history)
     }
 }

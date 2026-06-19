@@ -1,5 +1,4 @@
-package com.example.playlistmaker
-
+package com.example.playlistmaker.presentation.activity
 
 import android.content.Intent
 import android.os.Bundle
@@ -8,10 +7,12 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.net.toUri
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import com.example.playlistmaker.App
+import com.example.playlistmaker.R
 import com.google.android.material.switchmaterial.SwitchMaterial
+import androidx.core.net.toUri
 
 class SettingsActivity : AppCompatActivity() {
 
@@ -19,26 +20,24 @@ class SettingsActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_settings)
         enableEdgeToEdge()
+
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.settings_product)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
 
-
-        //Кнопка переключения тем(светлая, тёмная)
+        // Кнопка переключения тем
         val themeSwitcher = findViewById<SwitchMaterial>(R.id.themeSwitcher)
         themeSwitcher.isChecked = (applicationContext as App).darkTheme
-
-        // Обработчик изменения состояния переключателя
-        themeSwitcher.setOnCheckedChangeListener { switcher, checked ->
+        themeSwitcher.setOnCheckedChangeListener { _, checked ->
             (applicationContext as App).switchTheme(checked)
         }
 
-        // Кнопка возврата назад
+        // Кнопка возврата
         val backButton = findViewById<Button>(R.id.ic_vector_buck)
         backButton.setOnClickListener {
-            finish() // Завершить текущую активность
+            finish()
             Toast.makeText(this, getString(R.string.back), Toast.LENGTH_SHORT).show()
         }
 
@@ -61,7 +60,6 @@ class SettingsActivity : AppCompatActivity() {
             )
         }
 
-
         // Кнопка оферты
         val userAgreementButton = findViewById<TextView>(R.id.userAgreementButton)
         userAgreementButton.setOnClickListener {
@@ -69,12 +67,13 @@ class SettingsActivity : AppCompatActivity() {
             val browserIntent = Intent(Intent.ACTION_VIEW, agreementUrl.toUri())
             startActivity(browserIntent)
         }
+
+
         // Кнопка поддержки
         val supportButton = findViewById<TextView>(R.id.supportButton)
         supportButton.setOnClickListener {
             openEmailClient()
         }
-
     }
 
     private fun openEmailClient() {
@@ -82,12 +81,38 @@ class SettingsActivity : AppCompatActivity() {
         val subject = getString(R.string.email_subject)
         val messageBody = getString(R.string.email_body)
 
-        val intent = Intent(Intent.ACTION_SENDTO).apply {
-            data = "mailto:".toUri()
-            putExtra(Intent.EXTRA_EMAIL, arrayOf(emailAddress))
-            putExtra(Intent.EXTRA_SUBJECT, subject)
-            putExtra(Intent.EXTRA_TEXT, messageBody)
+        if (emailAddress.isNotEmpty()) {
+            val intent = Intent(Intent.ACTION_SEND).apply {
+                type = "message/rfc822"
+                putExtra(Intent.EXTRA_EMAIL, arrayOf(emailAddress))
+                putExtra(Intent.EXTRA_SUBJECT, subject)
+                putExtra(Intent.EXTRA_TEXT, messageBody)
+            }
+
+            try {
+                if (intent.resolveActivity(packageManager) != null) {
+                    startActivity(Intent.createChooser(intent, "Выберите почтовый клиент"))
+                } else {
+                    Toast.makeText(
+                        this,
+                        "На устройстве не установлен почтовый клиент",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+            } catch (_: Exception) {
+                Toast.makeText(
+                    this,
+                    "Ошибка при открытии почтового клиента",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+        } else {
+            Toast.makeText(
+                this,
+                "Не указан адрес электронной почты",
+                Toast.LENGTH_SHORT
+            ).show()
         }
-        startActivity(intent)
     }
+
 }

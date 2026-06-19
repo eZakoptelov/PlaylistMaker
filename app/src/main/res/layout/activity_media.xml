@@ -4,7 +4,7 @@
     android:id="@+id/media_product"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MediaActivity">
+    tools:context=".presentation.activity.MediaActivity">
 
     <TextView
         android:id="@+id/button_mediateka"

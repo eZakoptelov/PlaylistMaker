@@ -1,4 +1,4 @@
-package com.example.playlistmaker
+package com.example.playlistmaker.presentation.adapter
 
 import android.view.View
 import android.widget.ImageView
@@ -7,7 +7,10 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.CenterCrop
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
-import java.util.Locale
+import com.example.playlistmaker.R
+import com.example.playlistmaker.domain.model.TrackItem
+import com.example.playlistmaker.presentation.utils.dpToPx
+import okhttp3.internal.concurrent.formatDuration
 
 class TrackViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
     private val artworkIv: ImageView = itemView.findViewById(R.id.artworkIv)
@@ -33,12 +36,4 @@ class TrackViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         artistNameTv.text = track.artistName
         trackTimeTv.text = formatDuration(track.trackTimeMillis)
     }
-}
-
-// функции для форматирования в миллисекунды
-private fun formatDuration(millis: Long): String {
-    val totalSeconds = millis / 1000
-    val minutes = totalSeconds / 60
-    val seconds = totalSeconds % 60
-    return String.format(Locale.getDefault(), "%d:%02d", minutes, seconds)
 }
