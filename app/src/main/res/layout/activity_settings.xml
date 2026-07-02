@@ -47,7 +47,7 @@
 
 
         <com.google.android.material.switchmaterial.SwitchMaterial
-            android:id="@+id/themeSwitcher"
+            android:id="@+id/switchDarkMode"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_marginStart="@dimen/marginStart_16"

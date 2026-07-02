@@ -13,28 +13,28 @@
         android:supportsRtl="true">
 
         <activity
-            android:name=".presentation.activity.PlayerActivity"
+            android:name=".player.ui.activity.PlayerActivity"
             android:exported="true"
             android:theme="@style/Theme.PlaylistMaker"/>
 
         <activity
-            android:name=".presentation.activity.MediaActivity"
+            android:name=".media.ui.activity.MediaActivity"
             android:exported="true"
             android:theme="@style/Theme.PlaylistMaker" />
 
         <activity
-            android:name=".presentation.activity.SearchActivity"
+            android:name=".search.ui.activity.SearchActivity"
             android:configChanges="uiMode"
             android:exported="true"
             android:theme="@style/Theme.PlaylistMaker" />
 
         <activity
-            android:name=".presentation.activity.SettingsActivity"
+            android:name=".settings.ui.activity.SettingsActivity"
             android:exported="true"
             android:theme="@style/Theme.PlaylistMaker" />
 
         <activity
-            android:name=".presentation.activity.MainActivity"
+            android:name=".main.ui.activity.MainActivity"
             android:exported="true"
             android:theme="@style/Theme.PlaylistMaker">
 

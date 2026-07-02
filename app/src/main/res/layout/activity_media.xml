@@ -4,7 +4,8 @@
     android:id="@+id/media_product"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".presentation.activity.MediaActivity">
+    tools:context=".media.ui.activity.MediaActivity"
+    style="@style/DayNight">
 
     <TextView
         android:id="@+id/button_mediateka"
@@ -13,5 +14,14 @@
         android:layout_gravity="center">
 
     </TextView>
+    <Button
+        android:id="@+id/ic_vector_buck"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_marginStart="4dp"
+        android:layout_marginTop="4dp"
+        style="@style/BackButtonStyle">
+
+    </Button>
 
 </FrameLayout>

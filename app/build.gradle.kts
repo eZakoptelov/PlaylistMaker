@@ -11,11 +11,9 @@ plugins {
 
 android {
     namespace = "com.example.playlistmaker"
-    compileSdk {
-        version = release(36) {
-            minorApiLevel = 1
-        }
-    }
+    compileSdk = 36
+
+
 
     defaultConfig {
         applicationId = "com.example.playlistmaker"
@@ -56,11 +54,11 @@ dependencies {
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     implementation(libs.glide)
-    kapt ("com.github.bumptech.glide:compiler:5.0.5")
-    implementation("com.google.code.gson:gson:2.13.2")
-    implementation("com.squareup.retrofit2:retrofit:3.0.0")
-    implementation("com.squareup.retrofit2:converter-gson:3.0.0")
-    implementation("com.github.bumptech.glide:glide:4.16.0")
-    annotationProcessor("com.github.bumptech.glide:compiler:4.16.0")
+    kapt (libs.compiler.v505)
+    implementation(libs.gson)
+    implementation(libs.retrofit)
+    implementation(libs.converter.gson)
+    implementation(libs.glide.v4160)
+    annotationProcessor(libs.github.compiler)
 
 }
