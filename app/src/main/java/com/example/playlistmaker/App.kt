@@ -1,35 +1,51 @@
 package com.example.playlistmaker
 
 import android.app.Application
-import android.content.Context
 import android.content.SharedPreferences
 import androidx.appcompat.app.AppCompatDelegate
-import com.example.playlistmaker.creator.UseCaseCreator
-import com.example.playlistmaker.search.data.api.ItunesApi
-import com.example.playlistmaker.search.data.api.ItunesApiFactory
-import com.example.playlistmaker.search.data.storage.StorageCreator
+import com.example.playlistmaker.data.api.ItunesApi
+import com.example.playlistmaker.presentation.creator.UseCaseCreator
+import com.example.playlistmaker.utils.Constants.BASE_URL
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
 
 class App : Application() {
     lateinit var useCaseCreator: UseCaseCreator
-    lateinit var prefs: SharedPreferences
+    var darkTheme = false
+    private lateinit var prefs: SharedPreferences
 
     override fun onCreate() {
         super.onCreate()
+        useCaseCreator = UseCaseCreator(
+            api = provideItunesApi(),
+            context = this
+        )
+        prefs = getSharedPreferences("app_settings", MODE_PRIVATE)
+        darkTheme = prefs.getBoolean("dark_theme", false)
+        updateTheme(darkTheme)
 
-        prefs = getSharedPreferences("app_settings", Context.MODE_PRIVATE)
-        val darkTheme = prefs.getBoolean("dark_theme", false)
-        applyTheme(darkTheme)
-
-        val storageCreator = StorageCreator(getSharedPreferences("app_prefs", Context.MODE_PRIVATE))
-        val itunesApi: ItunesApi = ItunesApiFactory.create()
-
-        useCaseCreator = UseCaseCreator(itunesApi, storageCreator, prefs)
+    }
+    private fun provideItunesApi(): ItunesApi {
+        return Retrofit.Builder()
+            .baseUrl(BASE_URL)
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
+            .create(ItunesApi::class.java)
     }
 
-    fun applyTheme(darkThemeEnabled: Boolean) {
+    fun switchTheme(darkThemeEnabled: Boolean) {
+        darkTheme = darkThemeEnabled
+        prefs.edit().putBoolean("dark_theme", darkThemeEnabled).apply()
+        updateTheme(darkThemeEnabled)
+    }
+
+    private fun updateTheme(darkThemeEnabled: Boolean) {
         AppCompatDelegate.setDefaultNightMode(
-            if (darkThemeEnabled) AppCompatDelegate.MODE_NIGHT_YES
-            else AppCompatDelegate.MODE_NIGHT_NO
+            if (darkThemeEnabled) {
+                AppCompatDelegate.MODE_NIGHT_YES
+            } else {
+                AppCompatDelegate.MODE_NIGHT_NO
+            }
         )
     }
 }
