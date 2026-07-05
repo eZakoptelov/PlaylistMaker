@@ -1,9 +1,9 @@
 package com.example.playlistmaker.sharing.data.interactor.impl
 
 import android.content.Intent
+import androidx.core.net.toUri
 import com.example.playlistmaker.sharing.domain.interactor.SharingInteractor
 import com.example.playlistmaker.utils.Constants
-import androidx.core.net.toUri
 
 class SharingInteractorImpl : SharingInteractor {
 

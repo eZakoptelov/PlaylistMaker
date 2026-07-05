@@ -7,7 +7,6 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.playlistmaker.player.domain.PlayerInteractor
 import com.example.playlistmaker.player.domain.PlayerRules
-import com.example.playlistmaker.player.domain.PlayerState
 import com.example.playlistmaker.search.domain.model.TrackItem
 import com.example.playlistmaker.utils.Constants
 
@@ -16,8 +15,8 @@ class PlayerViewModel(
     val rules: PlayerRules
 ) : ViewModel() {
 
-    private val _state = MutableLiveData<PlayerState>()
-    val state: LiveData<PlayerState> = _state
+    private val _state = MutableLiveData<PlayerUiState>()
+    val state: LiveData<PlayerUiState> = _state
 
     private var currentTrack: TrackItem? = null
 
@@ -52,7 +51,7 @@ class PlayerViewModel(
 
     fun setTrack(track: TrackItem) {
         currentTrack = track
-        _state.value = PlayerState(
+        _state.value = PlayerUiState(
             track = track,
             isPlaying = false,
             isReady = false,

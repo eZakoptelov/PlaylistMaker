@@ -1,12 +1,15 @@
 package com.example.playlistmaker.settings.ui.viewmodel
 
+import android.content.Intent
+
 sealed class SettingsUiState {
-    data class Loaded(
-        val isDarkTheme: Boolean,
-        val shareText: String
-    ) : SettingsUiState()
+data class Content(
+        val isDark: Boolean,
+        val shareText: String,
+        val applyLocalTheme: Boolean = false
+) : SettingsUiState()
 
+    data class LaunchIntent(val intent: Intent) : SettingsUiState()
 
-    data class LaunchIntent(val intent: android.content.Intent) : SettingsUiState()
-    object RestartActivity : SettingsUiState()
+    data object FinishActivity : SettingsUiState()
 }

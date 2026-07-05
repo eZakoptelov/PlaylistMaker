@@ -40,7 +40,6 @@ class SearchViewModel(
 
     fun addToHistory(track: TrackItem) {
         addToHistoryUseCase.addTrack(track)
-        _uiState.value = SearchUiState.History(getHistoryUseCase.getHistory())
     }
 
     fun clearHistory() {

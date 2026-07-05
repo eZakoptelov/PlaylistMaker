@@ -1,11 +1,9 @@
-import org.gradle.kotlin.dsl.annotationProcessor
-import org.gradle.kotlin.dsl.implementation
-
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
-    id ("kotlin-kapt")
     id ("kotlin-parcelize")
+    id("org.jetbrains.kotlin.kapt")
+
 
 }
 
@@ -53,7 +51,6 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
-    implementation(libs.glide)
     kapt (libs.compiler.v505)
     implementation(libs.gson)
     implementation(libs.retrofit)

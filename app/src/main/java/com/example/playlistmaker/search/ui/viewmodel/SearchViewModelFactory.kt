@@ -2,10 +2,10 @@ package com.example.playlistmaker.search.ui.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import com.example.playlistmaker.search.domain.usecase.SearchUseCase
-import com.example.playlistmaker.search.domain.usecase.GetSearchHistoryUseCase
 import com.example.playlistmaker.search.domain.usecase.AddToHistoryUseCase
 import com.example.playlistmaker.search.domain.usecase.ClearHistoryUseCase
+import com.example.playlistmaker.search.domain.usecase.GetSearchHistoryUseCase
+import com.example.playlistmaker.search.domain.usecase.SearchUseCase
 
 class SearchViewModelFactory(
     private val searchUseCase: SearchUseCase,

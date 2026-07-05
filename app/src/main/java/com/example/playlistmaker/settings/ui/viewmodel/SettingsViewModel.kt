@@ -1,7 +1,5 @@
 package com.example.playlistmaker.settings.ui.viewmodel
 
-
-import androidx.appcompat.app.AppCompatDelegate
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -11,8 +9,7 @@ import com.example.playlistmaker.sharing.domain.interactor.SharingInteractor
 class SettingsViewModel(
     private val sharingInteractor: SharingInteractor,
     private val settingsInteractor: SettingsInteractor,
-    private val onThemeModeRequested: (Int) -> Unit
-) : ViewModel(){
+) : ViewModel() {
 
     private val _state = MutableLiveData<SettingsUiState>()
     val state: LiveData<SettingsUiState> = _state
@@ -22,14 +19,25 @@ class SettingsViewModel(
     }
 
     private fun loadState() {
+
         val isDark = settingsInteractor.getDarkTheme()
         val shareText = settingsInteractor.getShareText()
-        _state.value = SettingsUiState.Loaded(isDark, shareText)
+        _state.value = SettingsUiState.Content(isDark, shareText)
     }
 
-    fun toggleTheme(isDark: Boolean) {
+    fun processInput(intent: SettingsUiIntent) {
+        when (intent) {
+            is SettingsUiIntent.BackClicked -> _state.value = SettingsUiState.FinishActivity
+            is SettingsUiIntent.ShareAppClicked -> shareApp()
+            is SettingsUiIntent.SupportClicked -> openSupport()
+            is SettingsUiIntent.AgreementClicked -> openAgreement()
+            is SettingsUiIntent.ThemeToggled -> toggleTheme(intent.isChecked)
+        }
+    }
+    private fun toggleTheme(isDark: Boolean) {
         settingsInteractor.setDarkTheme(isDark)
-        onThemeModeRequested(if (isDark) AppCompatDelegate.MODE_NIGHT_YES else AppCompatDelegate.MODE_NIGHT_NO)
+        val currentShareText = (_state.value as? SettingsUiState.Content)?.shareText ?: ""
+        _state.value = SettingsUiState.Content(isDark, currentShareText)
     }
 
     fun shareApp() {
@@ -42,11 +50,5 @@ class SettingsViewModel(
 
     fun openAgreement() {
         _state.value = SettingsUiState.LaunchIntent(sharingInteractor.openAgreement())
-    }
-    fun clearEvent() {
-        val current = _state.value
-        if (current is SettingsUiState.LaunchIntent || current is SettingsUiState.RestartActivity) {
-            loadState()
-        }
     }
 }

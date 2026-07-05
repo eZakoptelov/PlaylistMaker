@@ -15,9 +15,6 @@ class PlayerInteractorImpl(
     private var isLoading = false
     private var isTrackLoaded = false
 
-    companion object {
-        private const val TAG = "PlayerDebug"
-    }
 
     override fun load(url: String, onError: (Exception) -> Unit) {
         if (isLoading) {
@@ -84,5 +81,8 @@ class PlayerInteractorImpl(
 
     override fun setPreparedListener(listener: () -> Unit) {
         preparedListener = listener
+    }
+    companion object {
+        private const val TAG = "PlayerDebug"
     }
 }

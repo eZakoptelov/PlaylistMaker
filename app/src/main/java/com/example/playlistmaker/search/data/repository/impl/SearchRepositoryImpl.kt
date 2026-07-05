@@ -12,7 +12,7 @@ import retrofit2.Response
 class SearchRepositoryImpl(
     private val api: ItunesApi,
     private val searchHistory: SearchHistory,
-    private val mapper: TrackMapper
+private val mapper: TrackMapper
 ) : SearchRepository {
 
     override fun searchTracks(query: String, onResult: (Result<List<TrackItem>>) -> Unit) {
