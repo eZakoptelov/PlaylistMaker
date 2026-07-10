@@ -7,9 +7,9 @@ import com.example.playlistmaker.settings.domain.interactor.SettingsInteractor
 import com.example.playlistmaker.sharing.domain.interactor.SharingInteractor
 
 class SettingsViewModel(
-    private val sharingInteractor: SharingInteractor,
     private val settingsInteractor: SettingsInteractor,
-) : ViewModel() {
+    private val sharingInteractor: SharingInteractor
+): ViewModel(){
 
     private val _state = MutableLiveData<SettingsUiState>()
     val state: LiveData<SettingsUiState> = _state

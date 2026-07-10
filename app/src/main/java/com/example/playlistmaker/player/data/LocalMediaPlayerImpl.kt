@@ -1,7 +1,6 @@
 package com.example.playlistmaker.player.data
 
 import android.media.MediaPlayer
-import androidx.annotation.VisibleForTesting
 import com.example.playlistmaker.player.domain.MediaPlayerWrapper
 
 class LocalMediaPlayerImpl : MediaPlayerWrapper {
@@ -58,17 +57,19 @@ class LocalMediaPlayerImpl : MediaPlayerWrapper {
     }
 
     override fun stop() {
-        mediaPlayer?.stop()
-
+        if (mediaPlayer?.isPlaying == true) {
+            try {
+                mediaPlayer?.stop()
+            } catch (_: Exception) {
+            }
+        }
     }
 
     override fun release() {
         if (mediaPlayer != null) {
             try {
-                mediaPlayer?.stop()
                 mediaPlayer?.release()
-            } catch (ignored: Exception) {
-                // Игнорируем ошибки при освобождении
+            } catch (_: Exception) {
             } finally {
                 mediaPlayer = null
             }
@@ -77,8 +78,5 @@ class LocalMediaPlayerImpl : MediaPlayerWrapper {
 
     override fun isPlaying() = mediaPlayer?.isPlaying == true
 
-    override fun currentPosition(): Long = mediaPlayer?.currentPosition?.toLong() ?: 0L
-
-    @VisibleForTesting
-    internal fun getMediaPlayer(): MediaPlayer? = mediaPlayer
+    override fun currentPosition(): Long = mediaPlayer?.currentPosition?.toLong() ?: 200L
 }
