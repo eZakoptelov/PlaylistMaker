@@ -74,9 +74,13 @@ class PlayerActivity : AppCompatActivity() {
         setupPlayPauseButton()
 
         backButton.setOnClickListener {
-            viewModel.stop()
+            val state = viewModel.state.value
+            if (state?.isPlaying == true || state?.isReady == true) {
+                viewModel.stop()
+            }
             navigateToSearchActivity()
         }
+
 
         observeState()
     }

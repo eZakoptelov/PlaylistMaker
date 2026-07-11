@@ -11,9 +11,19 @@ import org.koin.dsl.module
 import org.koin.androidx.viewmodel.dsl.viewModel
 
 val playerModule = module {
-    single<MediaPlayerWrapper> { LocalMediaPlayerImpl() }
+
+    factory { android.media.MediaPlayer() }
+
+
+    factory<MediaPlayerWrapper> {
+        LocalMediaPlayerImpl(get())
+    }
+
     single<PlayerRules> { PlayerRulesImpl() }
-    single<PlayerInteractor> { PlayerInteractorImpl(get()) }
+
+    factory<PlayerInteractor> {
+        PlayerInteractorImpl(get())
+    }
 
     viewModel {
         PlayerViewModel(
@@ -22,3 +32,4 @@ val playerModule = module {
         )
     }
 }
+

@@ -4,7 +4,8 @@ import android.app.Application
 import androidx.appcompat.app.AppCompatDelegate
 import com.example.playlistmaker.di.playerModule
 import com.example.playlistmaker.di.searchModule
-import com.example.playlistmaker.di.settingsAndSharingModule
+import com.example.playlistmaker.di.settingsModule
+import com.example.playlistmaker.di.sharingModule
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
 import org.koin.core.context.startKoin
@@ -17,7 +18,11 @@ class App : Application() {
         startKoin {
             androidLogger()
             androidContext(this@App)
-            modules(playerModule, searchModule, settingsAndSharingModule)
+            modules(playerModule,
+                searchModule,
+                settingsModule,
+                sharingModule
+            )
         }
 
         applyTheme()

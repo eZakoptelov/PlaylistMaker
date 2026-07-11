@@ -2,9 +2,9 @@ package com.example.playlistmaker.search.data.repository.impl
 import com.example.playlistmaker.search.data.api.ItunesApi
 import com.example.playlistmaker.search.data.dto.SearchResponseDto
 import com.example.playlistmaker.search.data.mapper.TrackMapper
-import com.example.playlistmaker.search.data.repository.SearchRepository
 import com.example.playlistmaker.search.data.storage.HistoryStorage
 import com.example.playlistmaker.search.domain.model.TrackItem
+import com.example.playlistmaker.search.domain.repository.SearchRepository
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response

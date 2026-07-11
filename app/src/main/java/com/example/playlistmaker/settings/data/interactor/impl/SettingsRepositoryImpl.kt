@@ -1,14 +1,14 @@
-package com.example.playlistmaker.settings.data.interactor.impl
+package com.example.playlistmaker.settings.data.repository.impl
 
 import android.content.SharedPreferences
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.content.edit
-import com.example.playlistmaker.settings.domain.interactor.SettingsInteractor
+import com.example.playlistmaker.settings.domain.SettingsUseCase
 import com.example.playlistmaker.utils.Constants
 
-class SettingsInteractorImpl(
+class SettingsRepositoryImpl(
     private val prefs: SharedPreferences
-) : SettingsInteractor {
+) : SettingsUseCase {
 
     override fun getDarkTheme(): Boolean {
         return prefs.getBoolean(Constants.KEY_DARK_THEME, false)
@@ -21,7 +21,5 @@ class SettingsInteractorImpl(
         )
     }
 
-    override fun getShareText(): String {
-        return Constants.KEY_SHARE_TEXT
-    }
+    override fun getShareText(): String = Constants.KEY_SHARE_TEXT
 }

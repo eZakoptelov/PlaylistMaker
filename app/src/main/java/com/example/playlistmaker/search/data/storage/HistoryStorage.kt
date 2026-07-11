@@ -6,8 +6,8 @@ import com.example.playlistmaker.search.domain.model.TrackItem
 import com.example.playlistmaker.utils.Constants
 import com.google.gson.Gson
 
-class HistoryStorage(private val sharedPreferences: SharedPreferences) {
-    private val gson = Gson()
+class HistoryStorage(private val sharedPreferences: SharedPreferences,
+    private val gson: Gson){
     fun getHistory(): List<TrackItem> = loadHistory()
 
     fun addToHistory(track: TrackItem) {
