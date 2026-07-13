@@ -10,7 +10,7 @@ import com.example.playlistmaker.player.domain.PlayerRules
 import com.example.playlistmaker.search.domain.model.TrackItem
 import com.example.playlistmaker.utils.Constants
 
-class PlayerViewModel(
+class PlayerViewModel (
     private val interactor: PlayerInteractor,
     val rules: PlayerRules
 ) : ViewModel() {

@@ -1,6 +1,6 @@
-package com.example.playlistmaker.settings.domain.interactor
+package com.example.playlistmaker.settings.domain
 
-interface SettingsInteractor {
+interface SettingsUseCase {
     fun getDarkTheme(): Boolean
     fun setDarkTheme(isDark: Boolean)
     fun getShareText(): String

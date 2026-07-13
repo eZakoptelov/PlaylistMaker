@@ -6,19 +6,18 @@ import android.view.View
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
-import android.widget.Toast
 import android.widget.ToggleButton
-import androidx.activity.viewModels
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.bumptech.glide.Glide
 import com.example.playlistmaker.R
 import com.example.playlistmaker.player.ui.viewmodel.PlayerViewModel
-import com.example.playlistmaker.player.ui.viewmodel.PlayerViewModelFactory
 import com.example.playlistmaker.search.domain.model.TrackItem
 import com.example.playlistmaker.search.ui.activity.SearchActivity
 import com.example.playlistmaker.utils.Constants
+import org.koin.androidx.viewmodel.ext.android.getViewModel
 
 class PlayerActivity : AppCompatActivity() {
 
@@ -26,15 +25,16 @@ class PlayerActivity : AppCompatActivity() {
     private lateinit var backButton: Button
     private lateinit var playPauseButton: ToggleButton
     private lateinit var currentTimeText: TextView
-    private var track: TrackItem? = null  // Теперь nullable
+    private var track: TrackItem? = null
 
-    private val viewModel: PlayerViewModel by viewModels {
-        PlayerViewModelFactory.create()
-    }
+    private lateinit var viewModel: PlayerViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.player_activity)
+
+
+        viewModel = getViewModel()
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.playerSong)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
@@ -74,9 +74,13 @@ class PlayerActivity : AppCompatActivity() {
         setupPlayPauseButton()
 
         backButton.setOnClickListener {
-            viewModel.stop()
+            val state = viewModel.state.value
+            if (state?.isPlaying == true || state?.isReady == true) {
+                viewModel.stop()
+            }
             navigateToSearchActivity()
         }
+
 
         observeState()
     }
@@ -108,7 +112,6 @@ class PlayerActivity : AppCompatActivity() {
         countryValue: TextView,
         trackDurationText: TextView
     ) {
-        // Безопасно работаем с nullable track
         val t = track ?: return
         trackNameTv.text = t.trackName
         artistNameTv.text = t.artistName

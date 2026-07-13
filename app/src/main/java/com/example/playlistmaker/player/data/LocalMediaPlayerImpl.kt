@@ -1,12 +1,13 @@
 package com.example.playlistmaker.player.data
 
 import android.media.MediaPlayer
-import androidx.annotation.VisibleForTesting
+import android.util.Log
 import com.example.playlistmaker.player.domain.MediaPlayerWrapper
 
-class LocalMediaPlayerImpl : MediaPlayerWrapper {
+class LocalMediaPlayerImpl(
+    private val mediaPlayer: MediaPlayer
+) : MediaPlayerWrapper {
 
-    private var mediaPlayer: MediaPlayer? = null
     private var onCompletionCallback: (() -> Unit)? = null
     private var onPreparedCallback: (() -> Unit)? = null
     private var onErrorCallback: ((Exception) -> Unit)? = null
@@ -20,65 +21,81 @@ class LocalMediaPlayerImpl : MediaPlayerWrapper {
         onPrepared: () -> Unit,
         onError: (Exception) -> Unit
     ) {
-        release()
+        try {
+            // reset() допустим, если мы осознанно хотим переиспользовать экземпляр.
+            // Но помни: после reset() плеер в состоянии UNINITIALIZED.
+            mediaPlayer.reset()
+            mediaPlayer.setDataSource(url)
 
-        onPreparedCallback = onPrepared
-        onErrorCallback = onError
+            onPreparedCallback = onPrepared
+            onErrorCallback = onError
 
-        mediaPlayer = MediaPlayer().apply {
-            setOnCompletionListener {
-                onCompletionCallback?.invoke()
-            }
-            setOnPreparedListener {
+            mediaPlayer.setOnPreparedListener {
                 onPreparedCallback?.invoke()
             }
-            setOnErrorListener { mp, what, extra ->
-                release()
+
+            mediaPlayer.setOnErrorListener { _, what, extra ->
                 onErrorCallback?.invoke(Exception("MediaPlayer error: what=$what, extra=$extra"))
                 false
             }
-        }
 
-        try {
-            mediaPlayer?.reset()
-            mediaPlayer?.setDataSource(url)
-            mediaPlayer?.prepareAsync()
+            mediaPlayer.setOnCompletionListener {
+                onCompletionCallback?.invoke()
+            }
+
+            mediaPlayer.prepareAsync()
         } catch (e: Exception) {
-            release()
+            Log.e("PlayerWrapper", "Error loading media", e)
             onError(e)
         }
     }
 
     override fun start() {
-        mediaPlayer?.start()
-    }
-
-    override fun pause() {
-        mediaPlayer?.pause()
-    }
-
-    override fun stop() {
-        mediaPlayer?.stop()
-
-    }
-
-    override fun release() {
-        if (mediaPlayer != null) {
-            try {
-                mediaPlayer?.stop()
-                mediaPlayer?.release()
-            } catch (ignored: Exception) {
-                // Игнорируем ошибки при освобождении
-            } finally {
-                mediaPlayer = null
-            }
+        try {
+            mediaPlayer.start()
+        } catch (e: IllegalStateException) {
+            Log.w("PlayerWrapper", "Cannot start: player not prepared or released", e)
         }
     }
 
-    override fun isPlaying() = mediaPlayer?.isPlaying == true
+    override fun pause() {
+        try {
+            mediaPlayer.pause()
+        } catch (e: IllegalStateException) {
+            Log.w("PlayerWrapper", "Cannot pause: player not playing or released", e)
+        }
+    }
 
-    override fun currentPosition(): Long = mediaPlayer?.currentPosition?.toLong() ?: 0L
+    override fun stop() {
+        try {
+            mediaPlayer.stop()
+        } catch (e: IllegalStateException) {
 
-    @VisibleForTesting
-    internal fun getMediaPlayer(): MediaPlayer? = mediaPlayer
+            Log.w("PlayerWrapper", "Tried to stop in invalid state (already released or not prepared)", e)
+        }
+    }
+
+    override fun release() {
+        try {
+            mediaPlayer.release()
+        } catch (e: IllegalStateException) {
+            Log.w("PlayerWrapper", "Release called on already released player", e)
+        }
+    }
+
+    override fun isPlaying(): Boolean {
+        return try {
+            mediaPlayer.isPlaying
+        } catch (_: IllegalStateException) {
+            false
+        }
+    }
+
+    override fun currentPosition(): Long {
+        return try {
+            mediaPlayer.currentPosition.toLong()
+        } catch (_: IllegalStateException) {
+            0L
+        }
+    }
 }

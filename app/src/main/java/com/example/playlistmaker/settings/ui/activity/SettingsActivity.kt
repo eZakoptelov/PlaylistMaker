@@ -7,18 +7,15 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import androidx.lifecycle.ViewModelProvider
-import com.example.playlistmaker.App
 import com.example.playlistmaker.R
 import com.example.playlistmaker.settings.ui.viewmodel.SettingsUiIntent
 import com.example.playlistmaker.settings.ui.viewmodel.SettingsUiState
 import com.example.playlistmaker.settings.ui.viewmodel.SettingsViewModel
-import com.example.playlistmaker.settings.ui.viewmodel.SettingsViewModelFactory
 import com.google.android.material.switchmaterial.SwitchMaterial
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class SettingsActivity : AppCompatActivity() {
-
-    private lateinit var viewModel: SettingsViewModel
+    private val viewModel: SettingsViewModel by viewModel()
 
     // UI Elements
     private lateinit var switchDarkMode: SwitchMaterial
@@ -35,7 +32,6 @@ class SettingsActivity : AppCompatActivity() {
 
         setupWindowInsets()
         bindViews()
-        setupDependencies()
         observeState()
         setupButtons()
     }
@@ -64,16 +60,6 @@ class SettingsActivity : AppCompatActivity() {
         tvSupportButton = findViewById(R.id.supportButton)
         tvUserAgreementButton = findViewById(R.id.userAgreementButton)
         btnBack = findViewById(R.id.ic_vector_buck)
-    }
-
-    private fun setupDependencies() {
-        val app = application as App
-        val useCaseCreator = app.useCaseCreator
-        val settingsInteractor = useCaseCreator.createSettingsInteractor()
-        val sharingInteractor = useCaseCreator.createSharingInteractor()
-
-        val factory = SettingsViewModelFactory(sharingInteractor, settingsInteractor)
-        viewModel = ViewModelProvider(this, factory)[SettingsViewModel::class.java]
     }
 
     private fun setupButtons() {

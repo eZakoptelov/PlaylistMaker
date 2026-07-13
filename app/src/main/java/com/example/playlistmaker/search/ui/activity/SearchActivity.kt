@@ -17,10 +17,8 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.widget.doOnTextChanged
-import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.playlistmaker.App
 import com.example.playlistmaker.R
 import com.example.playlistmaker.main.ui.activity.MainActivity
 import com.example.playlistmaker.player.ui.activity.PlayerActivity
@@ -29,12 +27,12 @@ import com.example.playlistmaker.search.ui.adapter.OnItemClickListener
 import com.example.playlistmaker.search.ui.adapter.TrackAdapter
 import com.example.playlistmaker.search.ui.viewmodel.SearchUiState
 import com.example.playlistmaker.search.ui.viewmodel.SearchViewModel
-import com.example.playlistmaker.search.ui.viewmodel.SearchViewModelFactory
 import com.example.playlistmaker.utils.Constants
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class SearchActivity : AppCompatActivity() {
 
-    private lateinit var viewModel: SearchViewModel
+    private val viewModel: SearchViewModel by viewModel()
     private lateinit var adapter: TrackAdapter
     private lateinit var historyAdapter: TrackAdapter
 
@@ -79,18 +77,6 @@ class SearchActivity : AppCompatActivity() {
         historyContainer.visibility = View.GONE
 
         setupListeners()
-
-        // Инициализация ViewModel через ViewModelProvider (фабрика)
-        val useCaseCreator = (applicationContext as App).useCaseCreator
-        val factory = SearchViewModelFactory(
-            useCaseCreator.createSearchUseCase(),
-            useCaseCreator.createGetSearchHistoryUseCase(),
-            useCaseCreator.createAddToHistoryUseCase(),
-            useCaseCreator.createClearHistoryUseCase()
-        )
-        viewModel = ViewModelProvider(this, factory)[SearchViewModel::class.java]
-
-
         viewModel.uiState.observe(this) { state ->
             when (state) {
                 is SearchUiState.Idle -> {

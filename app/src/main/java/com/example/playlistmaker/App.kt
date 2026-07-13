@@ -1,34 +1,38 @@
 package com.example.playlistmaker
 
 import android.app.Application
-import android.content.Context
-import android.content.SharedPreferences
 import androidx.appcompat.app.AppCompatDelegate
-import com.example.playlistmaker.creator.UseCaseCreator
-import com.example.playlistmaker.search.data.api.ItunesApi
-import com.example.playlistmaker.search.data.api.ItunesApiFactory
-import com.example.playlistmaker.search.data.storage.StorageCreator
+import com.example.playlistmaker.di.playerModule
+import com.example.playlistmaker.di.searchModule
+import com.example.playlistmaker.di.settingsModule
+import com.example.playlistmaker.di.sharingModule
+import org.koin.android.ext.koin.androidContext
+import org.koin.android.ext.koin.androidLogger
+import org.koin.core.context.startKoin
 
 class App : Application() {
-    lateinit var useCaseCreator: UseCaseCreator
-    lateinit var prefs: SharedPreferences
 
     override fun onCreate() {
         super.onCreate()
 
-        prefs = getSharedPreferences("app_settings", Context.MODE_PRIVATE)
-        val darkTheme = prefs.getBoolean("dark_theme", false)
-        applyTheme(darkTheme)
+        startKoin {
+            androidLogger()
+            androidContext(this@App)
+            modules(playerModule,
+                searchModule,
+                settingsModule,
+                sharingModule
+            )
+        }
 
-        val storageCreator = StorageCreator(getSharedPreferences("app_prefs", Context.MODE_PRIVATE))
-        val itunesApi: ItunesApi = ItunesApiFactory.create()
-
-        useCaseCreator = UseCaseCreator(itunesApi, storageCreator, prefs)
+        applyTheme()
     }
 
-    fun applyTheme(darkThemeEnabled: Boolean) {
+    private fun applyTheme() {
+        val prefs = getSharedPreferences("app_settings", MODE_PRIVATE)
+        val darkTheme = prefs.getBoolean("dark_theme", false)
         AppCompatDelegate.setDefaultNightMode(
-            if (darkThemeEnabled) AppCompatDelegate.MODE_NIGHT_YES
+            if (darkTheme) AppCompatDelegate.MODE_NIGHT_YES
             else AppCompatDelegate.MODE_NIGHT_NO
         )
     }
