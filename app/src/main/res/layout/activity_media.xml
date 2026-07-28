@@ -1,27 +1,59 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/media_product"
+    style="@style/DayNight"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".media.ui.activity.MediaActivity"
-    style="@style/DayNight">
+    android:layout_height="match_parent">
 
-    <TextView
-        android:id="@+id/button_mediateka"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center">
-
-    </TextView>
+    <!-- Кнопка «Назад» -->
     <Button
         android:id="@+id/ic_vector_buck"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
-        android:layout_marginStart="4dp"
-        android:layout_marginTop="4dp"
-        style="@style/BackButtonStyle">
+        style="@style/BackButtonStyle"
+        android:layout_width="@dimen/layout_width_48"
+        android:layout_height="@dimen/height_48"
+        android:layout_marginStart="@dimen/marginStart_4"
+        android:layout_marginTop="@dimen/marginTop_4"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
-    </Button>
+    <!-- Заголовок -->
 
-</FrameLayout>
+    <TextView
+        android:id="@+id/tvTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="12dp"
+        android:layout_marginTop="14dp"
+        style="@style/AppText"
+        android:text="@string/Mediateka"
+        app:layout_constraintStart_toEndOf="@id/ic_vector_buck"
+        app:layout_constraintTop_toTopOf="parent" />
+
+
+    <!-- TabLayout -->
+    <com.google.android.material.tabs.TabLayout
+        android:id="@+id/tabLayout"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        style="@style/AppTabLayout"
+        app:tabTextAppearance="@style/TabTextAppearance"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/ic_vector_buck" />
+
+
+
+
+    <!-- ViewPager2 -->
+    <androidx.viewpager2.widget.ViewPager2
+        android:id="@+id/viewPager"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        style="@style/AppViewPager"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tabLayout" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
