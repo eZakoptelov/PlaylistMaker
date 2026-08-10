@@ -8,7 +8,6 @@ import androidx.fragment.app.Fragment
 import com.example.playlistmaker.databinding.FragmentFavoritesTrackBinding
 import com.example.playlistmaker.media.ui.viewmodel.FavoritesTrackViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
-
 class FragmentFavorites : Fragment() {
     private var _binding: FragmentFavoritesTrackBinding? = null
     private val binding get() = _binding!!

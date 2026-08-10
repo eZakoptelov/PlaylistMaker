@@ -8,11 +8,6 @@ import androidx.fragment.app.Fragment
 import com.example.playlistmaker.databinding.FragmentPlaylistsBinding
 import com.example.playlistmaker.media.ui.viewmodel.PlaylistsViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
-
-
-
-
-
 class FragmentPlaylists : Fragment() {
     private var _binding: FragmentPlaylistsBinding? = null
     private val binding get() = _binding!!

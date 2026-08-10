@@ -1,60 +1,57 @@
 package com.example.playlistmaker.main.ui.activity
 
-import android.content.Intent
+import android.graphics.Rect
 import android.os.Bundle
-import android.widget.Button
-import android.widget.Toast
-import androidx.activity.enableEdgeToEdge
+import android.view.View
+import android.view.ViewTreeObserver
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
+import androidx.navigation.NavController
+import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.ui.setupWithNavController
 import com.example.playlistmaker.R
-import com.example.playlistmaker.media.ui.activity.MediaActivity
-import com.example.playlistmaker.search.ui.activity.SearchActivity
-import com.example.playlistmaker.settings.ui.activity.SettingsActivity
+import com.example.playlistmaker.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
+
+    private lateinit var binding: ActivityMainBinding
+    private lateinit var navController: NavController
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        enableEdgeToEdge()
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
-        setContentView(R.layout.activity_main)
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main_product)) { v, insets ->
-            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
-            insets
-        }
-
-        bindViews()
-        setupListeners()
+        setupNavigation()
+        setupKeyboardListener()
     }
 
-    private fun bindViews() {
-        findViewById<Button>(R.id.button_search)
-        findViewById<Button>(R.id.button_mediateka)
-        findViewById<Button>(R.id.button_settings)
+    private fun setupNavigation() {
+        val navHostFragment = supportFragmentManager
+            .findFragmentById(R.id.nav_host_fragment) as NavHostFragment
+
+        navController = navHostFragment.navController
+        binding.bottomNav.setupWithNavController(navController)
     }
 
-    private fun setupListeners() {
-        findViewById<Button>(R.id.button_search).setOnClickListener {
-            startActivity(Intent(this, SearchActivity::class.java))
-            toastMessage(getString(R.string.search))
-        }
+    private fun setupKeyboardListener() {
+        binding.root.viewTreeObserver.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener {
+            override fun onGlobalLayout() {
+                val rootRect = Rect()
+                binding.root.getWindowVisibleDisplayFrame(rootRect)
 
-        findViewById<Button>(R.id.button_mediateka).setOnClickListener {
-            startActivity(Intent(this, MediaActivity::class.java))
-            toastMessage(getString(R.string.media_library))
-        }
+                // Высота экрана
+                val screenHeight = binding.root.rootView.height
+                // Насколько видимая область меньше экрана = высота клавиатуры + статус/нав бар
+                val diff = screenHeight - rootRect.bottom
 
-        findViewById<Button>(R.id.button_settings).setOnClickListener {
-            startActivity(Intent(this, SettingsActivity::class.java))
-            toastMessage(getString(R.string.settings))
-        }
-    }
-
-    private fun toastMessage(text: String) {
-        Toast.makeText(this, text, Toast.LENGTH_SHORT).show()
+                // Если «пропало» больше 25% высоты экрана — считаем, что клавиатура открыта
+                if (diff > screenHeight / 4) {
+                    binding.bottomNav.visibility = View.GONE
+                } else {
+                    binding.bottomNav.visibility = View.VISIBLE
+                }
+            }
+        })
     }
 }

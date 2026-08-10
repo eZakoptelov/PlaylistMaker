@@ -61,15 +61,6 @@
         <item name="android:layout_centerVertical">true</item>
     </style>
 
-    <style name="TextViewSearch" parent="Widget.MaterialComponents.TextView">
-        <item name="android:layout_marginStart">64dp</item>
-        <item name="android:text">@string/input_hint</item>
-        <item name="android:layout_gravity">center_vertical</item>
-        <item name="android:textColor">?attr/colorOnPrimary</item>
-        <item name="android:textSize">@dimen/text_size_22</item>
-        <item name="android:fontFamily">@font/ys_text_regular</item>
-    </style>
-
     <style name="ButtonCancelSearch" parent="Widget.MaterialComponents.Button.OutlinedButton">
         <item name="android:layout_gravity">right|center_vertical</item>
         <item name="android:layout_marginEnd">16dp</item>
@@ -276,11 +267,6 @@
     </style>
 
 
-
-
-    <style name="AppViewPager">
-        <item name="android:background">@color/white</item>
-    </style>
 
 
 </resources>

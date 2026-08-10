@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.core.widget.NestedScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -45,8 +46,6 @@
             app:layout_constraintStart_toStartOf="@id/left_guideline"
             app:layout_constraintTop_toBottomOf="@id/ic_vector_buck" />
 
-
-
         <TextView
             android:id="@+id/trackNameTv"
             style="@style/TextTrackName"
@@ -63,7 +62,7 @@
             app:layout_constraintStart_toStartOf="@id/left_guideline"
             app:layout_constraintTop_toBottomOf="@id/trackNameTv" />
 
-        <!-- Кнопка коллекции -->
+        <!-- Кнопка очереди -->
         <ImageButton
             android:id="@+id/buttonQueue"
             style="@style/ImageButtonStyle.Queue"
@@ -72,7 +71,7 @@
             app:layout_constraintStart_toStartOf="@id/left_guideline"
             app:layout_constraintTop_toBottomOf="@id/artistNameTv" />
 
-        <!-- Кнопка воспроизведения,паузы-->
+        <!-- Кнопка воспроизведения/паузы -->
         <ToggleButton
             android:id="@+id/button_pause"
             style="@style/ImageButtonStyle.Play"
@@ -81,8 +80,7 @@
             app:layout_constraintTop_toBottomOf="@id/artistNameTv"
             android:background="@drawable/play_pause_selector"
             android:textOff=""
-            android:textOn=""/>
-
+            android:textOn="" />
 
         <!-- Кнопка избранного -->
         <ImageButton
@@ -92,7 +90,7 @@
             app:layout_constraintStart_toEndOf="@id/button_pause"
             app:layout_constraintTop_toBottomOf="@id/artistNameTv" />
 
-        <!-- Длительность трека -->
+        <!-- Длительность трека (общая) -->
         <TextView
             android:id="@+id/trackDuration"
             style="@style/TextTrackDuration"
@@ -103,9 +101,7 @@
             app:layout_constraintTop_toBottomOf="@id/button_pause"
             tools:text="00:00" />
 
-
-
-        <!-- Отображение текущего времени воспроизведения -->
+        <!-- Текущее время воспроизведения -->
         <TextView
             android:id="@+id/currentTimeText"
             style="@style/TextTrackDuration"
@@ -116,9 +112,7 @@
             app:layout_constraintStart_toStartOf="@id/left_guideline"
             app:layout_constraintTop_toBottomOf="@id/button_pause" />
 
-        <!---/////////////////////////////////////////////////////////////// -->
-
-        <!-- Длительность (метка) -->
+        <!-- Метка "Длительность" -->
         <TextView
             android:id="@+id/textDuration"
             style="@style/TextLabel"
@@ -136,6 +130,7 @@
             app:layout_constraintStart_toEndOf="@id/textDuration"
             app:layout_constraintTop_toBottomOf="@id/trackDuration"
             tools:text="0:30" />
+
         <!-- Альбом -->
         <TextView
             android:id="@+id/collectionName"
@@ -154,6 +149,7 @@
             app:layout_constraintStart_toEndOf="@id/collectionName"
             app:layout_constraintTop_toBottomOf="@id/textDuration"
             tools:text="Альбом" />
+
         <!-- Год релиза -->
         <TextView
             android:id="@+id/releaseDate"
@@ -172,7 +168,6 @@
             app:layout_constraintStart_toEndOf="@id/releaseDate"
             app:layout_constraintTop_toBottomOf="@id/collectionName"
             tools:text="2026" />
-
 
         <!-- Жанр -->
         <TextView
@@ -206,8 +201,6 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@id/country"
             app:layout_constraintTop_toBottomOf="@id/primaryGenreName"
-            tools:text="Антрактида" />
-
-
+            tools:text="Антарктида" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.core.widget.NestedScrollView>

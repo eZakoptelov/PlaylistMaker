@@ -34,7 +34,7 @@ class SettingsViewModel(
         }
     }
 
-    private fun toggleTheme(isDark: Boolean) {
+    fun toggleTheme(isDark: Boolean) {
         settingsUseCase.setDarkTheme(isDark)
 
         // Сохраняем текущий shareText, чтобы не потерять его при обновлении состояния

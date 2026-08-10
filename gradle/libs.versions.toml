@@ -1,5 +1,7 @@
 [versions]
 agp = "8.13.2"
+coreKtxVersion = "1.12.0"
+fragmentKtx = "1.8.9"
 glide = "4.16.0"
 gson = "2.14.0"
 koin = "3.3.3"
@@ -12,6 +14,7 @@ appcompat = "1.7.1"
 material = "1.13.0"
 activity = "1.12.1"
 constraintlayout = "2.1.4"
+navigationFragmentKtx = "2.9.8"
 playServicesMaps = "18.2.0"
 retrofit = "2.11.0"
 ksp = "1.9.24-1.0.15"
@@ -22,6 +25,10 @@ androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = 
 androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
 androidx-activity = { group = "androidx.activity", name = "activity", version.ref = "activity" }
 androidx-constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayout", version.ref = "constraintlayout" }
+androidx-core-ktx-v1120 = { module = "androidx.core:core-ktx", version.ref = "coreKtxVersion" }
+androidx-fragment-ktx = { module = "androidx.fragment:fragment-ktx", version.ref = "fragmentKtx" }
+androidx-navigation-fragment-ktx = { module = "androidx.navigation:navigation-fragment-ktx", version.ref = "navigationFragmentKtx" }
+androidx-navigation-ui-ktx = { module = "androidx.navigation:navigation-ui-ktx", version.ref = "navigationFragmentKtx" }
 androidx-preference-ktx = { group = "androidx.preference", name = "preference-ktx", version.ref = "preferenceKtx" }
 
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
@@ -39,7 +46,7 @@ gson = { module = "com.google.code.gson:gson", version.ref = "gson" }
 #  Koin
 koin-core = { module = "io.insert-koin:koin-core", version.ref = "koin" }
 koin-android = { module = "io.insert-koin:koin-android", version.ref = "koin" }
-#koin-androidx-viewmodel = { module = "io.insert-koin:koin-androidx-viewmodel", version.ref = "koin" }
+
 
 
 glide = { module = "com.github.bumptech.glide:glide", version.ref = "glide" }
