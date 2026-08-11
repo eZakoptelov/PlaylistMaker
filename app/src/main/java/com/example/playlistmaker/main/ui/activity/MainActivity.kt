@@ -1,10 +1,13 @@
 package com.example.playlistmaker.main.ui.activity
 
-import android.graphics.Rect
 import android.os.Bundle
-import android.view.View
-import android.view.ViewTreeObserver
+import androidx.activity.OnBackPressedCallback
+import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.isVisible
+import androidx.core.view.updatePadding
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
@@ -18,40 +21,62 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
+        enableEdgeToEdge()
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
         setupNavigation()
-        setupKeyboardListener()
+        setupWindowInsetsListener()
+        handleBackPressWhenKeyboardOpen()
     }
 
     private fun setupNavigation() {
-        val navHostFragment = supportFragmentManager
-            .findFragmentById(R.id.nav_host_fragment) as NavHostFragment
-
+        val navHostFragment =
+            supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
         navController = navHostFragment.navController
         binding.bottomNav.setupWithNavController(navController)
     }
 
-    private fun setupKeyboardListener() {
-        binding.root.viewTreeObserver.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener {
-            override fun onGlobalLayout() {
-                val rootRect = Rect()
-                binding.root.getWindowVisibleDisplayFrame(rootRect)
+    private fun setupWindowInsetsListener() {
+        ViewCompat.setOnApplyWindowInsetsListener(binding.root) { view, windowInsets ->
+            val bars = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars())
+            view.updatePadding(top = bars.top, bottom = bars.bottom)
 
-                // Высота экрана
-                val screenHeight = binding.root.rootView.height
-                // Насколько видимая область меньше экрана = высота клавиатуры + статус/нав бар
-                val diff = screenHeight - rootRect.bottom
+            val isKeyboardVisible = windowInsets.isVisible(WindowInsetsCompat.Type.ime())
 
-                // Если «пропало» больше 25% высоты экрана — считаем, что клавиатура открыта
-                if (diff > screenHeight / 4) {
-                    binding.bottomNav.visibility = View.GONE
+            if (navController.currentDestination?.id != R.id.playerFragment) {
+                binding.bottomNav.isVisible = !isKeyboardVisible
+            } else {
+                binding.bottomNav.isVisible = false
+            }
+
+            WindowInsetsCompat.CONSUMED
+        }
+    }
+    private fun handleBackPressWhenKeyboardOpen() {
+        onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                if (isKeyboardOpened()) {
+                    hideKeyboard()
                 } else {
-                    binding.bottomNav.visibility = View.VISIBLE
+                    isEnabled = false
+                    onBackPressedDispatcher.onBackPressed()
+                    isEnabled = true
                 }
             }
         })
+    }
+
+    private fun isKeyboardOpened(): Boolean {
+        return ViewCompat.getRootWindowInsets(binding.root)
+            ?.isVisible(WindowInsetsCompat.Type.ime()) == true
+    }
+
+    private fun hideKeyboard() {
+        currentFocus?.let { view ->
+            val imm = getSystemService(android.view.inputmethod.InputMethodManager::class.java)
+            imm.hideSoftInputFromWindow(view.windowToken, 0)
+            view.clearFocus()
+        }
     }
 }

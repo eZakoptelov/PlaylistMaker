@@ -11,9 +11,9 @@ import com.example.playlistmaker.databinding.FragmentMediaBinding
 import com.google.android.material.tabs.TabLayoutMediator
 
 class MediaFragment : Fragment() {
-
     private var _binding: FragmentMediaBinding? = null
     private val binding get() = _binding!!
+    private var tabLayoutMediator: TabLayoutMediator? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -38,17 +38,22 @@ class MediaFragment : Fragment() {
                 else -> throw IllegalArgumentException("Unknown position")
             }
         }
-
-        TabLayoutMediator(tabLayout, viewPager) { tab, position ->
+        val mediator = TabLayoutMediator(tabLayout, viewPager) { tab, position ->
             when (position) {
                 0 -> tab.text = getString(R.string.tab_favorites)
                 1 -> tab.text = getString(R.string.tab_playlists)
             }
-        }.attach()
+        }
+
+        mediator.attach()
+        tabLayoutMediator = mediator
     }
 
     override fun onDestroyView() {
-        super.onDestroyView()
+        tabLayoutMediator?.detach()
+        tabLayoutMediator = null
+
         _binding = null
+        super.onDestroyView()
     }
 }

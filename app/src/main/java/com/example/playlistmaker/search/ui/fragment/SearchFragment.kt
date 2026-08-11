@@ -30,7 +30,7 @@ class SearchFragment : Fragment() {
 
     private lateinit var adapter: TrackAdapter
     private lateinit var historyAdapter: TrackAdapter
-
+    private var isSearchFieldFocused = false
     private var searchDebounce: Runnable? = null
     private val handler = Handler(Looper.getMainLooper())
     private val debounceDelay = Constants.SEARCH_DEBOUNCE_DELAY
@@ -55,12 +55,15 @@ class SearchFragment : Fragment() {
 
         binding.historyRecyclerView.layoutManager = LinearLayoutManager(requireContext())
         binding.historyRecyclerView.adapter = historyAdapter
-
-        // Изначально скрываем историю
         binding.historyContainer.visibility = View.GONE
 
         setupListeners()
         observeState()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        binding.historyContainer.visibility = View.GONE
     }
 
     private fun observeState() {
@@ -68,6 +71,7 @@ class SearchFragment : Fragment() {
             when (state) {
                 is SearchUiState.Idle -> {
                     binding.progressBar.visibility = View.GONE
+                    binding.historyContainer.visibility = View.GONE
                 }
 
                 is SearchUiState.Loading -> {
@@ -75,25 +79,23 @@ class SearchFragment : Fragment() {
                     binding.tracksRecyclerView.visibility = View.GONE
                     binding.stateErrorConnection.visibility = View.GONE
                     binding.stateNothingFound.visibility = View.GONE
+                    binding.historyContainer.visibility = View.GONE
                 }
 
                 is SearchUiState.Success -> {
                     binding.progressBar.visibility = View.GONE
                     adapter.submitList(state.tracks)
+                    binding.historyContainer.visibility = View.GONE
 
                     if (state.tracks.isEmpty()) {
-                        // Нет результатов
                         binding.tracksRecyclerView.visibility = View.GONE
                         binding.stateNothingFound.visibility = View.VISIBLE
                         binding.stateErrorConnection.visibility = View.GONE
-
                         removeFocusAndHideHistory()
                     } else {
-                        // Есть результаты
                         binding.tracksRecyclerView.visibility = View.VISIBLE
                         binding.stateNothingFound.visibility = View.GONE
                         binding.stateErrorConnection.visibility = View.GONE
-
                         addFirstTrackToHistoryAutomatically(state.tracks.first())
                     }
                 }
@@ -103,7 +105,7 @@ class SearchFragment : Fragment() {
                     binding.tracksRecyclerView.visibility = View.GONE
                     binding.stateErrorConnection.visibility = View.VISIBLE
                     binding.stateNothingFound.visibility = View.GONE
-
+                    binding.historyContainer.visibility = View.GONE
                     Toast.makeText(requireContext(), state.message, Toast.LENGTH_SHORT).show()
                     removeFocusAndHideHistory()
                 }
@@ -115,31 +117,26 @@ class SearchFragment : Fragment() {
                     binding.stateNothingFound.visibility = View.GONE
 
                     historyAdapter.submitList(state.history)
+
+                    val shouldShowHistory = state.history.isNotEmpty() && isSearchFieldFocused
+                    binding.historyContainer.visibility = if (shouldShowHistory) View.VISIBLE else View.GONE
                 }
             }
         }
     }
 
-    // Автоматически добавляем первый трек из списка в историю
     private fun addFirstTrackToHistoryAutomatically(track: TrackItem) {
-        // Проверяем, что история ещё не содержит этот трек (опционально)
         viewModel.addToHistory(track)
-
     }
 
     private fun removeFocusAndHideHistory() {
         binding.inputEditText.clearFocus()
-        binding.historyContainer.visibility = View.GONE
     }
 
     private fun setupListeners() {
         binding.clearHistoryButton.setOnClickListener {
             viewModel.clearHistory()
             Toast.makeText(requireContext(), "История очищена", Toast.LENGTH_SHORT).show()
-
-            if (binding.inputEditText.hasFocus() && binding.inputEditText.text.isBlank()) {
-                binding.historyContainer.visibility = View.VISIBLE
-            }
         }
 
         binding.buttonConnection.setOnClickListener {
@@ -147,7 +144,8 @@ class SearchFragment : Fragment() {
             if (text.isNotBlank()) {
                 viewModel.search(text)
             } else {
-                Toast.makeText(requireContext(), "Нет запроса для повтора", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), "Нет запроса для повтора", Toast.LENGTH_SHORT)
+                    .show()
             }
         }
 
@@ -156,12 +154,6 @@ class SearchFragment : Fragment() {
             hideKeyboard(binding.inputEditText)
             adapter.submitList(emptyList())
             viewModel.getInitialHistory()
-
-            if (binding.inputEditText.hasFocus()) {
-                binding.historyContainer.visibility = View.VISIBLE
-            } else {
-                binding.historyContainer.visibility = View.GONE
-            }
         }
 
         binding.inputEditText.doOnTextChanged { text, _, _, _ ->
@@ -177,18 +169,9 @@ class SearchFragment : Fragment() {
                     viewModel.search(query)
                 }
                 handler.postDelayed(searchDebounce!!, debounceDelay)
-
-                // ЕСТЬ ТЕКСТ → СКРЫВАЕМ ИСТОРИЮ
-                binding.historyContainer.visibility = View.GONE
             } else {
                 searchDebounce = null
                 viewModel.getInitialHistory()
-
-                if (binding.inputEditText.hasFocus()) {
-                    binding.historyContainer.visibility = View.VISIBLE
-                } else {
-                    binding.historyContainer.visibility = View.GONE
-                }
             }
         }
 
@@ -199,10 +182,8 @@ class SearchFragment : Fragment() {
                 if (query.isNotBlank()) {
                     viewModel.search(query)
                     hideKeyboard(binding.inputEditText)
-                    binding.historyContainer.visibility = View.GONE
                 } else {
                     viewModel.getInitialHistory()
-                    binding.historyContainer.visibility = View.GONE
                 }
                 return@setOnEditorActionListener true
             }
@@ -210,19 +191,14 @@ class SearchFragment : Fragment() {
         }
 
         binding.inputEditText.setOnFocusChangeListener { _, hasFocus ->
-            if (hasFocus) {
-                if (binding.inputEditText.text.isBlank()) {
-                    viewModel.getInitialHistory()
-                    binding.historyContainer.visibility = View.VISIBLE
-                }
-            } else {
-                binding.historyContainer.visibility = View.GONE
+            isSearchFieldFocused = hasFocus
+            if (hasFocus && binding.inputEditText.text.isBlank()) {
+                viewModel.getInitialHistory()
             }
         }
 
         val onItemClick = object : OnItemClickListener {
             override fun onItemClick(track: TrackItem) {
-                // При клике на трек — сразу добавляем в историю (он окажется сверху)
                 viewModel.addToHistory(track)
                 openPlayerFragment(track)
             }
@@ -250,5 +226,3 @@ class SearchFragment : Fragment() {
         super.onDestroyView()
     }
 }
-
-
