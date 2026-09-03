@@ -5,6 +5,7 @@ import com.example.playlistmaker.search.data.mapper.TrackMapper
 import com.example.playlistmaker.search.data.storage.HistoryStorage
 import com.example.playlistmaker.search.domain.model.TrackItem
 import com.example.playlistmaker.search.domain.repository.SearchRepository
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
@@ -25,6 +26,9 @@ class SearchRepositoryImpl(
             } else {
                 emit(Result.failure(Exception("API error: ${response.code()}")))
             }
+        }catch(e: CancellationException) {
+            throw e
+
         } catch (e: Exception) {
             emit(Result.failure(e))
         }

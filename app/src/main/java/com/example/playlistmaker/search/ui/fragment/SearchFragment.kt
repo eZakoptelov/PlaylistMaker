@@ -31,7 +31,6 @@ class SearchFragment : Fragment() {
     private lateinit var adapter: TrackAdapter
     private lateinit var historyAdapter: TrackAdapter
     private var isSearchFieldFocused = false
-    private lateinit var searchDebounce: (String) -> Unit
     private lateinit var clickDebounce: (TrackItem) -> Unit
 
     override fun onCreateView(
@@ -46,16 +45,6 @@ class SearchFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        //  debounce для поиска
-        searchDebounce = debounce(
-            delayMillis = Constants.SEARCH_DEBOUNCE_DELAY,
-            coroutineScope = viewLifecycleOwner.lifecycleScope,
-            useLastParam = true,
-        ) { query ->
-            viewModel.search(query)
-        }
-
-        //  debounce для кликов по треку
         clickDebounce = debounce(
             delayMillis = Constants.CLICK_DEBOUNCE_DELAY,
             coroutineScope = viewLifecycleOwner.lifecycleScope,
@@ -161,7 +150,7 @@ class SearchFragment : Fragment() {
         binding.buttonConnection.setOnClickListener {
             val text = binding.inputEditText.text.toString().trim()
             if (text.isNotBlank()) {
-                viewModel.search(text)
+                viewModel.searchImmediately(text)
             } else {
                 Toast.makeText(requireContext(), "Нет запроса для повтора", Toast.LENGTH_SHORT)
                     .show()
@@ -182,7 +171,7 @@ class SearchFragment : Fragment() {
             val query = text.toString().trim()
 
             if (query.isNotBlank()) {
-                searchDebounce(query)
+                viewModel.searchDebounce(query)
             } else {
                 viewModel.getInitialHistory()
             }
@@ -192,7 +181,7 @@ class SearchFragment : Fragment() {
             if (actionId == EditorInfo.IME_ACTION_DONE) {
                 val query = binding.inputEditText.text.toString().trim()
                 if (query.isNotBlank()) {
-                    viewModel.search(query)
+                    viewModel.searchImmediately(query)
                     hideKeyboard(binding.inputEditText)
                 } else {
                     viewModel.getInitialHistory()
