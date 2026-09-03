@@ -74,5 +74,8 @@ dependencies {
     //  Fragment и Core
     implementation(libs.androidx.fragment.ktx)
     implementation(libs.androidx.core.ktx)
+
+    // Корутины
+    implementation(libs.kotlinx.coroutines.android)
 }
 

@@ -1,39 +1,38 @@
 package com.example.playlistmaker.search.data.repository.impl
+
 import com.example.playlistmaker.search.data.api.ItunesApi
-import com.example.playlistmaker.search.data.dto.SearchResponseDto
 import com.example.playlistmaker.search.data.mapper.TrackMapper
 import com.example.playlistmaker.search.data.storage.HistoryStorage
 import com.example.playlistmaker.search.domain.model.TrackItem
 import com.example.playlistmaker.search.domain.repository.SearchRepository
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
+import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOn
 
 class SearchRepositoryImpl(
     private val api: ItunesApi,
     private val storage: HistoryStorage,
-private val mapper: TrackMapper
+    private val mapper: TrackMapper
 ) : SearchRepository {
 
-    override fun searchTracks(query: String, onResult: (Result<List<TrackItem>>) -> Unit) {
-        api.searchSongs(query).enqueue(object : Callback<SearchResponseDto> {
-            override fun onResponse(
-                call: Call<SearchResponseDto>,
-                response: Response<SearchResponseDto>
-            ) {
-                if (response.isSuccessful && response.body() != null) {
-                    val domainResponse = mapper.toDomain(response.body()!!)
-                    onResult(Result.success(domainResponse.results))
-                } else {
-                    onResult(Result.failure(Exception("API error: ${response.code()}")))
-                }
+    override fun searchTracks(query: String): Flow<Result<List<TrackItem>>> = flow {
+        try {
+            val response = api.searchSongs(query)
+            if (response.isSuccessful && response.body() != null) {
+                val domainResponse = mapper.toDomain(response.body()!!)
+                emit(Result.success(domainResponse.results))
+            } else {
+                emit(Result.failure(Exception("API error: ${response.code()}")))
             }
+        }catch(e: CancellationException) {
+            throw e
 
-            override fun onFailure(call: Call<SearchResponseDto>, t: Throwable) {
-                onResult(Result.failure(t))
-            }
-        })
-    }
+        } catch (e: Exception) {
+            emit(Result.failure(e))
+        }
+    }.flowOn(Dispatchers.IO)
 
     override fun getSearchHistory(): List<TrackItem> = storage.getHistory()
 
