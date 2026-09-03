@@ -8,6 +8,8 @@ import com.example.playlistmaker.search.domain.usecase.AddToHistoryUseCase
 import com.example.playlistmaker.search.domain.usecase.ClearHistoryUseCase
 import com.example.playlistmaker.search.domain.usecase.GetSearchHistoryUseCase
 import com.example.playlistmaker.search.domain.usecase.SearchUseCase
+import kotlinx.coroutines.launch
+import androidx.lifecycle.viewModelScope
 
 class SearchViewModel(
     private val searchUseCase: SearchUseCase,
@@ -27,16 +29,17 @@ class SearchViewModel(
 
         _uiState.value = SearchUiState.Loading
 
-        searchUseCase.search(query) { result ->
-            if (result.isSuccess) {
-                _uiState.value = SearchUiState.Success(result.getOrNull() ?: emptyList())
-            } else {
-                val message = result.exceptionOrNull()?.message ?: "Ошибка поиска"
-                _uiState.value = SearchUiState.Error(message)
+        viewModelScope.launch {
+            searchUseCase.search(query).collect { result ->
+                if (result.isSuccess) {
+                    _uiState.value = SearchUiState.Success(result.getOrNull() ?: emptyList())
+                } else {
+                    val message = result.exceptionOrNull()?.message ?: "Ошибка поиска"
+                    _uiState.value = SearchUiState.Error(message)
+                }
             }
         }
     }
-
 
     fun addToHistory(track: TrackItem) {
         addToHistoryUseCase.addTrack(track)

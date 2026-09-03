@@ -10,4 +10,5 @@ object Constants {
     const val MAX_HISTORY_SIZE = 10
     const val UPDATE_INTERVAL_MS = 300L
     const val SEARCH_DEBOUNCE_DELAY = 2000L
+    const val CLICK_DEBOUNCE_DELAY = 300L
 }

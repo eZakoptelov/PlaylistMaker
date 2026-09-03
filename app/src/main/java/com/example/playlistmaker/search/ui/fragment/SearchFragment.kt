@@ -1,8 +1,6 @@
 package com.example.playlistmaker.search.ui.fragment
 
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -20,7 +18,9 @@ import com.example.playlistmaker.search.ui.adapter.TrackAdapter
 import com.example.playlistmaker.search.ui.viewmodel.SearchUiState
 import com.example.playlistmaker.search.ui.viewmodel.SearchViewModel
 import com.example.playlistmaker.utils.Constants
+import com.example.playlistmaker.utils.debounce
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import androidx.lifecycle.lifecycleScope
 
 class SearchFragment : Fragment() {
 
@@ -31,9 +31,8 @@ class SearchFragment : Fragment() {
     private lateinit var adapter: TrackAdapter
     private lateinit var historyAdapter: TrackAdapter
     private var isSearchFieldFocused = false
-    private var searchDebounce: Runnable? = null
-    private val handler = Handler(Looper.getMainLooper())
-    private val debounceDelay = Constants.SEARCH_DEBOUNCE_DELAY
+    private lateinit var searchDebounce: (String) -> Unit
+    private lateinit var clickDebounce: (TrackItem) -> Unit
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -46,6 +45,25 @@ class SearchFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        //  debounce для поиска
+        searchDebounce = debounce(
+            delayMillis = Constants.SEARCH_DEBOUNCE_DELAY,
+            coroutineScope = viewLifecycleOwner.lifecycleScope,
+            useLastParam = true,
+        ) { query ->
+            viewModel.search(query)
+        }
+
+        //  debounce для кликов по треку
+        clickDebounce = debounce(
+            delayMillis = Constants.CLICK_DEBOUNCE_DELAY,
+            coroutineScope = viewLifecycleOwner.lifecycleScope,
+            useLastParam = false,
+        ) { track ->
+            viewModel.addToHistory(track)
+            openPlayerFragment(track)
+        }
 
         adapter = TrackAdapter(emptyList())
         historyAdapter = TrackAdapter(emptyList())
@@ -119,7 +137,8 @@ class SearchFragment : Fragment() {
                     historyAdapter.submitList(state.history)
 
                     val shouldShowHistory = state.history.isNotEmpty() && isSearchFieldFocused
-                    binding.historyContainer.visibility = if (shouldShowHistory) View.VISIBLE else View.GONE
+                    binding.historyContainer.visibility =
+                        if (shouldShowHistory) View.VISIBLE else View.GONE
                 }
             }
         }
@@ -162,22 +181,15 @@ class SearchFragment : Fragment() {
 
             val query = text.toString().trim()
 
-            searchDebounce?.let { handler.removeCallbacks(it) }
-
             if (query.isNotBlank()) {
-                searchDebounce = Runnable {
-                    viewModel.search(query)
-                }
-                handler.postDelayed(searchDebounce!!, debounceDelay)
+                searchDebounce(query)
             } else {
-                searchDebounce = null
                 viewModel.getInitialHistory()
             }
         }
 
         binding.inputEditText.setOnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_DONE) {
-                searchDebounce?.let { handler.removeCallbacks(it) }
                 val query = binding.inputEditText.text.toString().trim()
                 if (query.isNotBlank()) {
                     viewModel.search(query)
@@ -199,8 +211,7 @@ class SearchFragment : Fragment() {
 
         val onItemClick = object : OnItemClickListener {
             override fun onItemClick(track: TrackItem) {
-                viewModel.addToHistory(track)
-                openPlayerFragment(track)
+                clickDebounce(track)
             }
         }
         adapter.setOnItemClickListener(onItemClick)
@@ -221,7 +232,6 @@ class SearchFragment : Fragment() {
     }
 
     override fun onDestroyView() {
-        handler.removeCallbacksAndMessages(null)
         _binding = null
         super.onDestroyView()
     }
