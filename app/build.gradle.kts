@@ -2,6 +2,7 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     id("kotlin-parcelize")
+    id("com.google.devtools.ksp")
 }
 
 android {
@@ -39,6 +40,9 @@ android {
     buildFeatures {
         viewBinding = true
     }
+    kotlin {
+        jvmToolchain(17)
+    }
 }
 
 
@@ -65,7 +69,6 @@ dependencies {
     // Koin
     implementation(libs.koin.core)
     implementation(libs.koin.android)
-    //  implementation(libs.koin.androidx.viewmodel)
 
     // Navigation
     implementation(libs.androidx.navigation.fragment.ktx)
@@ -77,5 +80,11 @@ dependencies {
 
     // Корутины
     implementation(libs.kotlinx.coroutines.android)
+
+    // Библиотека Room
+    val room_version = "2.8.4"
+    implementation(libs.androidx.room.runtime)
+    ksp(libs.androidx.room.compiler)
+    implementation(libs.androidx.room.ktx)
 }
 

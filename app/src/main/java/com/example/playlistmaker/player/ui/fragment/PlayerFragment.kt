@@ -49,7 +49,9 @@ class PlayerFragment : Fragment() {
         bindTrackData()
         loadCoverImage()
         setupPlayPauseButton()
+        setupFavoriteButton()
         observeState()
+        observeFavorite()
     }
 
     private fun setupWindowInsets() {
@@ -60,13 +62,10 @@ class PlayerFragment : Fragment() {
         }
     }
 
-
     private fun bindViews() {
-        // Кнопка «Назад»
         binding.icVectorBuck.setOnClickListener {
             findNavController().popBackStack()
         }
-
     }
 
     private fun bindTrackData() {
@@ -117,6 +116,27 @@ class PlayerFragment : Fragment() {
             } else {
                 viewModel.pause()
             }
+        }
+    }
+    private fun setupFavoriteButton() {
+        binding.buttonBorder.setOnClickListener {
+            viewModel.onFavoriteClicked()
+        }
+    }
+
+    private fun observeFavorite() {
+        viewModel.isFavorite.observe(viewLifecycleOwner) { isFavorite ->
+            binding.buttonBorder.setImageDrawable(
+                if (isFavorite) {
+                    androidx.core.content.ContextCompat.getDrawable(
+                        requireContext(), R.drawable.button_favorite_border_like
+                    )
+                } else {
+                    androidx.core.content.ContextCompat.getDrawable(
+                        requireContext(), R.drawable.button_favorite_border_day
+                    )
+                }
+            )
         }
     }
 

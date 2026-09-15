@@ -7,7 +7,7 @@ class ClearHistoryUseCaseImpl(
     private val repository: SearchRepository
 ) : ClearHistoryUseCase {
 
-    override fun clearHistory() {
+    override suspend fun clearHistory() {
         repository.clearHistory()
     }
 }

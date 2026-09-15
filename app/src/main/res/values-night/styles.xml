@@ -162,7 +162,7 @@
     </style>
 
     <style name="ImageButtonStyle.Favorite">
-        <item name="android:src">@drawable/button_favorite_border_night</item>
+        <item name="android:src">@drawable/button_favorite_border_day</item>
     </style>
 
 

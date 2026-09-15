@@ -2,8 +2,11 @@ package com.example.playlistmaker
 
 import android.app.Application
 import androidx.appcompat.app.AppCompatDelegate
+import com.example.playlistmaker.di.dataModule
+import com.example.playlistmaker.di.interactorModule
 import com.example.playlistmaker.di.mediapoolModule
 import com.example.playlistmaker.di.playerModule
+import com.example.playlistmaker.di.repositoryModule
 import com.example.playlistmaker.di.searchModule
 import com.example.playlistmaker.di.settingsModule
 import com.example.playlistmaker.di.sharingModule
@@ -18,11 +21,15 @@ class App : Application() {
         startKoin {
             androidLogger()
             androidContext(this@App)
-            modules(playerModule,
+            modules(
+                playerModule,
                 searchModule,
                 settingsModule,
                 sharingModule,
-                mediapoolModule
+                mediapoolModule,
+                dataModule,
+                repositoryModule,
+                interactorModule
 
             )
         }

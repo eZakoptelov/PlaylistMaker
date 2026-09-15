@@ -63,16 +63,23 @@ class SearchViewModel(
     }
 
     fun addToHistory(track: TrackItem) {
-        addToHistoryUseCase.addTrack(track)
+        viewModelScope.launch {
+            addToHistoryUseCase.addTrack(track)
+        }
     }
 
     fun clearHistory() {
-        clearHistoryUseCase.clearHistory()
-        _uiState.value = SearchUiState.History(emptyList())
+        viewModelScope.launch {
+            clearHistoryUseCase.clearHistory()
+            _uiState.value = SearchUiState.History(emptyList())
+        }
     }
 
     fun getInitialHistory() {
         searchJob?.cancel()
-        _uiState.value = SearchUiState.History(getHistoryUseCase.getHistory())
+        viewModelScope.launch {
+            val history = getHistoryUseCase.getHistory()
+            _uiState.value = SearchUiState.History(history)
+        }
     }
 }

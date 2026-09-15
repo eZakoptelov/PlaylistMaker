@@ -198,7 +198,7 @@ class SearchFragment : Fragment() {
             }
         }
 
-        val onItemClick = object : OnItemClickListener {
+        val onItemClick = object : TrackAdapter.OnItemClickListener {
             override fun onItemClick(track: TrackItem) {
                 clickDebounce(track)
             }

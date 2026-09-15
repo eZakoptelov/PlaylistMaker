@@ -3,6 +3,8 @@ package com.example.playlistmaker.player.ui.viewmodel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.example.playlistmaker.favorite.domain.interactor.FavoriteTracksInteractor
 import com.example.playlistmaker.player.domain.PlayerInteractor
 import com.example.playlistmaker.player.domain.PlayerRules
 import com.example.playlistmaker.search.domain.model.TrackItem
@@ -10,16 +12,18 @@ import com.example.playlistmaker.utils.Constants
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import androidx.lifecycle.viewModelScope
 import kotlin.time.Duration.Companion.milliseconds
 
 class PlayerViewModel(
     private val interactor: PlayerInteractor,
-    val rules: PlayerRules
+    val rules: PlayerRules,
+    private val favoriteInteractor: FavoriteTracksInteractor  // <-- добавлен
 ) : ViewModel() {
 
     private val _state = MutableLiveData<PlayerUiState>()
     val state: LiveData<PlayerUiState> = _state
+    private val _isFavorite = MutableLiveData(false)
+    val isFavorite: LiveData<Boolean> = _isFavorite
 
     private var currentTrack: TrackItem? = null
     private var progressJob: Job? = null
@@ -42,6 +46,8 @@ class PlayerViewModel(
 
     fun setTrack(track: TrackItem) {
         currentTrack = track
+        _isFavorite.value = track.isFavorite
+
         _state.value = PlayerUiState(
             track = track,
             isPlaying = false,
@@ -50,6 +56,19 @@ class PlayerViewModel(
             duration = track.trackTimeMillis,
             error = null
         )
+    }
+    fun onFavoriteClicked() {
+        currentTrack?.let { track ->
+            viewModelScope.launch {
+                if (track.isFavorite) {
+                    favoriteInteractor.deleteTrack(track)
+                } else {
+                    favoriteInteractor.addTrack(track)
+                }
+                track.isFavorite = !track.isFavorite
+                _isFavorite.postValue(track.isFavorite)
+            }
+        }
     }
 
     fun loadTrack(track: TrackItem) {
@@ -120,7 +139,6 @@ class PlayerViewModel(
         )
         stopProgressUpdate()
     }
-
 
     private fun startProgressUpdate() {
         progressJob?.cancel()
