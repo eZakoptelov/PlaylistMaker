@@ -26,15 +26,16 @@ class SearchRepositoryImpl(
             } else {
                 emit(Result.failure(Exception("API error: ${response.code()}")))
             }
-        }catch(e: CancellationException) {
+        } catch (e: CancellationException) {
             throw e
-
         } catch (e: Exception) {
             emit(Result.failure(e))
         }
     }.flowOn(Dispatchers.IO)
 
-    override fun getSearchHistory(): List<TrackItem> = storage.getHistory()
+    override suspend fun getSearchHistory(): List<TrackItem> {
+        return storage.getHistory()
+    }
 
     override fun addToHistory(track: TrackItem) = storage.addToHistory(track)
 

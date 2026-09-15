@@ -8,7 +8,7 @@ class AddToHistoryUseCaseImpl(
     private val repository: SearchRepository
 ) : AddToHistoryUseCase {
 
-    override fun addTrack(track: TrackItem) {
+    override suspend fun addTrack(track: TrackItem) {
         repository.addToHistory(track)
     }
 }

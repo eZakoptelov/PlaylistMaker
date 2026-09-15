@@ -8,6 +8,7 @@ import androidx.fragment.app.Fragment
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.FragmentMediaBinding
+import com.example.playlistmaker.favorite.ui.fragment.FragmentFavorites
 import com.google.android.material.tabs.TabLayoutMediator
 
 class MediaFragment : Fragment() {

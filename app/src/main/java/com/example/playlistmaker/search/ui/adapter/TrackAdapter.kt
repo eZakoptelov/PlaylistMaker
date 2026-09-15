@@ -11,11 +11,12 @@ import com.bumptech.glide.Glide
 import com.example.playlistmaker.R
 import com.example.playlistmaker.search.domain.model.TrackItem
 
-
-
 class TrackAdapter(
     initialTracks: List<TrackItem>
 ) : RecyclerView.Adapter<TrackAdapter.TrackViewHolder>() {
+    interface OnItemClickListener {
+        fun onItemClick(track: TrackItem)
+    }
 
     private var itemClickListener: OnItemClickListener? = null
     private val tracks = initialTracks.toMutableList()

@@ -20,9 +20,17 @@
     <fragment
         android:id="@+id/mediaFragment"
         android:name="com.example.playlistmaker.media.ui.fragment.MediaFragment"
-        android:label="Медиатека" />
+        android:label="Медиатека">
 
-
+        <action
+            android:id="@+id/action_mediaFragment_to_playerFragment"
+            app:destination="@id/playerFragment">
+            <argument
+                android:name="track"
+                app:argType="com.example.playlistmaker.search.domain.model.TrackItem"
+                app:nullable="true" />
+        </action>
+    </fragment>
 
     <fragment
         android:id="@+id/playerFragment"
@@ -33,4 +41,10 @@
         android:id="@+id/settingsFragment"
         android:name="com.example.playlistmaker.settings.ui.fragment.SettingsFragment"
         android:label="Настройки" />
+
+    <fragment
+        android:id="@+id/favoritesFragment"
+        android:name="com.example.playlistmaker.favorite.ui.fragment.FragmentFavorites"
+        android:label="Избранные треки" />
+
 </navigation>

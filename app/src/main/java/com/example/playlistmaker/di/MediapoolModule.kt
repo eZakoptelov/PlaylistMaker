@@ -1,6 +1,6 @@
 package com.example.playlistmaker.di
 
-import com.example.playlistmaker.media.ui.viewmodel.FavoritesTrackViewModel
+import com.example.playlistmaker.favorite.ui.viewModel.FavoritesTrackViewModel
 import com.example.playlistmaker.media.ui.viewmodel.MediapoolViewModel
 import com.example.playlistmaker.media.ui.viewmodel.PlaylistsViewModel
 import org.koin.androidx.viewmodel.dsl.viewModelOf

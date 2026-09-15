@@ -3,6 +3,8 @@ package com.example.playlistmaker.player.ui.viewmodel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.example.playlistmaker.favorite.domain.interactor.FavoriteTracksInteractor
 import com.example.playlistmaker.player.domain.PlayerInteractor
 import com.example.playlistmaker.player.domain.PlayerRules
 import com.example.playlistmaker.search.domain.model.TrackItem
@@ -10,16 +12,19 @@ import com.example.playlistmaker.utils.Constants
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import androidx.lifecycle.viewModelScope
 import kotlin.time.Duration.Companion.milliseconds
+import kotlinx.coroutines.flow.first
 
 class PlayerViewModel(
     private val interactor: PlayerInteractor,
-    val rules: PlayerRules
+    val rules: PlayerRules,
+    private val favoriteInteractor: FavoriteTracksInteractor
 ) : ViewModel() {
 
     private val _state = MutableLiveData<PlayerUiState>()
     val state: LiveData<PlayerUiState> = _state
+    private val _isFavorite = MutableLiveData(false)
+    val isFavorite: LiveData<Boolean> = _isFavorite
 
     private var currentTrack: TrackItem? = null
     private var progressJob: Job? = null
@@ -42,6 +47,8 @@ class PlayerViewModel(
 
     fun setTrack(track: TrackItem) {
         currentTrack = track
+        _isFavorite.value = track.isFavorite
+
         _state.value = PlayerUiState(
             track = track,
             isPlaying = false,
@@ -51,9 +58,32 @@ class PlayerViewModel(
             error = null
         )
     }
+    fun onFavoriteClicked() {
+        val track = currentTrack ?: return
+        val newFavorite = !track.isFavorite
+
+        viewModelScope.launch {
+            if (newFavorite) {
+                favoriteInteractor.addTrack(
+                    track.copy(isFavorite = true, addedAt = System.currentTimeMillis())
+                )
+            } else {
+                favoriteInteractor.deleteTrack(track)
+            }
+            currentTrack = track.copy(isFavorite = newFavorite)
+            _isFavorite.value = newFavorite
+        }
+    }
 
     fun loadTrack(track: TrackItem) {
         setTrack(track)
+
+        viewModelScope.launch {
+            val favoriteTracks = favoriteInteractor.getFavoriteTracks().first()
+            val isFav = favoriteTracks.any { it.trackId == track.trackId }
+            currentTrack = track.copy(isFavorite = isFav)
+            _isFavorite.value = isFav
+        }
 
         if (track.previewUrl.isNullOrEmpty()) {
             _state.value = _state.value?.copy(
@@ -120,7 +150,6 @@ class PlayerViewModel(
         )
         stopProgressUpdate()
     }
-
 
     private fun startProgressUpdate() {
         progressJob?.cancel()
