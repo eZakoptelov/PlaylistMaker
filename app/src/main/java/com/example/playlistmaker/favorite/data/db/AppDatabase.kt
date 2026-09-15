@@ -22,7 +22,7 @@ abstract class AppDatabase : RoomDatabase() {
                 AppDatabase::class.java,
                 "playlistmaker_favorites.db"
             )
-                .fallbackToDestructiveMigration()
+                .fallbackToDestructiveMigration(false)
                 .build()
         }
     }

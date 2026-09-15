@@ -72,15 +72,15 @@ class PlayerInteractorImpl(
 
     override fun isPlaying(): Boolean = mediaPlayerWrapper.isPlaying()
 
-    override fun setOnCompletionListener(listener: () -> Unit) {
-        completionListener = listener
+    override fun setOnCompletionListener(callback: () -> Unit) {
+        completionListener = callback
         mediaPlayerWrapper.setOnCompletionListener {
             completionListener?.invoke()
         }
     }
 
-    override fun setPreparedListener(listener: () -> Unit) {
-        preparedListener = listener
+    override fun setPreparedListener(callback: () -> Unit) {
+        preparedListener = callback
     }
     companion object {
         private const val TAG = "PlayerDebug"

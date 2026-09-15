@@ -16,7 +16,6 @@ val repositoryModule = module {
             api = get(),
             storage = get(),
             mapper = get(),
-            favoriteDao = get()
         )
     }
 

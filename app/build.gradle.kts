@@ -34,14 +34,14 @@ android {
         targetCompatibility = JavaVersion.VERSION_17
     }
 
-    kotlinOptions {
-        jvmTarget = "17"
+    kotlin {
+        jvmToolchain(17)
+        compilerOptions {
+            jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_17)
+        }
     }
     buildFeatures {
         viewBinding = true
-    }
-    kotlin {
-        jvmToolchain(17)
     }
 }
 
@@ -82,7 +82,6 @@ dependencies {
     implementation(libs.kotlinx.coroutines.android)
 
     // Библиотека Room
-    val room_version = "2.8.4"
     implementation(libs.androidx.room.runtime)
     ksp(libs.androidx.room.compiler)
     implementation(libs.androidx.room.ktx)
