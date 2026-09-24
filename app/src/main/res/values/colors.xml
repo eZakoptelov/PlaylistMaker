@@ -21,6 +21,7 @@
     <color name="bottom_nav_inactive">#000000</color>   <!-- чёрный для неактивного -->
     <color name="bottom_nav_active">#3772E7</color>
 
+    <color name="text_primary">#FF000000</color>
 
 
 </resources>

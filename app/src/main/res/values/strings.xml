@@ -46,6 +46,9 @@
     <string name="tab_playlists">Плейлисты</string>
     <string name="tab_favorites">Избранные треки</string>
     <string name="Mediateka">Медиатека</string>
+    <string name="title">Название*</string>
+    <string name="description">Описание</string>
+    <string name="create">Создать</string>
 
 
 </resources>

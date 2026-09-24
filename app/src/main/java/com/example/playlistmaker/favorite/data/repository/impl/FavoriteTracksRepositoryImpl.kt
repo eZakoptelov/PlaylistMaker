@@ -2,7 +2,7 @@ package com.example.playlistmaker.favorite.data.repository.impl
 
 import com.example.playlistmaker.favorite.data.mapper.toDomain
 import com.example.playlistmaker.favorite.data.mapper.toEntity
-import com.example.playlistmaker.favorite.data.dao.FavoriteTracksDao
+import com.example.playlistmaker.favorite.data.db.dao.FavoriteTracksDao
 import com.example.playlistmaker.favorite.domain.repository.FavoriteTracksRepository
 import com.example.playlistmaker.search.domain.model.TrackItem
 import kotlinx.coroutines.flow.Flow

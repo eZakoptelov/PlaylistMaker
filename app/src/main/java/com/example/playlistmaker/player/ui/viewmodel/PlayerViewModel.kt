@@ -7,24 +7,35 @@ import androidx.lifecycle.viewModelScope
 import com.example.playlistmaker.favorite.domain.interactor.FavoriteTracksInteractor
 import com.example.playlistmaker.player.domain.PlayerInteractor
 import com.example.playlistmaker.player.domain.PlayerRules
+import com.example.playlistmaker.playlists.data.converters.PlaylistTrackConverter
+import com.example.playlistmaker.playlists.domain.interactor.PlaylistInteractor
+import com.example.playlistmaker.playlists.domain.model.Playlist
 import com.example.playlistmaker.search.domain.model.TrackItem
 import com.example.playlistmaker.utils.Constants
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlin.time.Duration.Companion.milliseconds
-import kotlinx.coroutines.flow.first
 
 class PlayerViewModel(
     private val interactor: PlayerInteractor,
     val rules: PlayerRules,
-    private val favoriteInteractor: FavoriteTracksInteractor
+    private val favoriteInteractor: FavoriteTracksInteractor,
+    private val playlistInteractor: PlaylistInteractor,
+    private val playlistConverter: PlaylistTrackConverter
 ) : ViewModel() {
 
     private val _state = MutableLiveData<PlayerUiState>()
     val state: LiveData<PlayerUiState> = _state
     private val _isFavorite = MutableLiveData(false)
     val isFavorite: LiveData<Boolean> = _isFavorite
+
+    private val _playlistsState = MutableLiveData<List<Playlist>>()
+    val playlistsState: LiveData<List<Playlist>> = _playlistsState
+
+    private val _addTrackStatus = MutableLiveData<String>()
+    val addTrackStatus: LiveData<String> = _addTrackStatus
 
     private var currentTrack: TrackItem? = null
     private var progressJob: Job? = null
@@ -45,6 +56,28 @@ class PlayerViewModel(
         }
     }
 
+    fun loadPlaylists() {
+        viewModelScope.launch {
+            playlistInteractor.getPlaylists().collect { playlists ->
+                _playlistsState.postValue(playlists)
+            }
+        }
+    }
+
+    fun addTrackToPlaylist(playlist: Playlist) {
+        val track = currentTrack ?: return
+        val trackIds = playlistConverter.jsonToTrackIds(playlist.trackIds)
+
+        if (track.trackId in trackIds) {
+            _addTrackStatus.postValue("Трек уже добавлен в плейлист ${playlist.name}")
+        } else {
+            viewModelScope.launch {
+                playlistInteractor.addTrackToPlaylist(playlist, track)
+                _addTrackStatus.postValue("Добавлено в плейлист ${playlist.name}")
+            }
+        }
+    }
+
     fun setTrack(track: TrackItem) {
         currentTrack = track
         _isFavorite.value = track.isFavorite
@@ -58,6 +91,7 @@ class PlayerViewModel(
             error = null
         )
     }
+
     fun onFavoriteClicked() {
         val track = currentTrack ?: return
         val newFavorite = !track.isFavorite

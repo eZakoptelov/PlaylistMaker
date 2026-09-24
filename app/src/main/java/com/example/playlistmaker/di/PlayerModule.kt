@@ -14,7 +14,6 @@ val playerModule = module {
 
     factory { android.media.MediaPlayer() }
 
-
     factory<MediaPlayerWrapper> {
         LocalMediaPlayerImpl(get())
     }
@@ -29,7 +28,9 @@ val playerModule = module {
         PlayerViewModel(
             interactor = get(),
             rules = get(),
-            favoriteInteractor = get()
+            favoriteInteractor = get(),
+            playlistInteractor = get(),
+            playlistConverter = get()
         )
     }
 }

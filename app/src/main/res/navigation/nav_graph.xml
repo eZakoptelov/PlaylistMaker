@@ -2,6 +2,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/nav_graph"
     app:startDestination="@id/mediaFragment">
+
     <fragment
         android:id="@+id/searchFragment"
         android:name="com.example.playlistmaker.search.ui.fragment.SearchFragment"
@@ -30,12 +31,26 @@
                 app:argType="com.example.playlistmaker.search.domain.model.TrackItem"
                 app:nullable="true" />
         </action>
+        <action
+            android:id="@+id/action_mediaFragment_to_newPlaylistFragment"
+            app:destination="@id/newPlaylistFragment" />
+
     </fragment>
+
+    <fragment
+        android:id="@+id/newPlaylistFragment"
+        android:name="com.example.playlistmaker.playlists.ui.fragment.NewPlaylistFragment"
+        android:label="Новый плейлист" />
 
     <fragment
         android:id="@+id/playerFragment"
         android:name="com.example.playlistmaker.player.ui.fragment.PlayerFragment"
-        android:label="Плеер" />
+        android:label="Плеер">
+        <action
+            android:id="@+id/action_playerFragment_to_newPlaylistFragment"
+            app:destination="@id/newPlaylistFragment" />
+    </fragment>
+
 
     <fragment
         android:id="@+id/settingsFragment"

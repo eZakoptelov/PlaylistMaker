@@ -20,6 +20,8 @@ retrofit = "2.11.0"
 ksp = "2.3.10"
 preferenceKtx = "1.2.1"
 roomRuntime = "2.8.4"
+playServicesMaps3d = "0.2.2"
+media3Extractor = "1.11.1"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -55,6 +57,8 @@ koin-android = { module = "io.insert-koin:koin-android", version.ref = "koin" }
 
 glide = { module = "com.github.bumptech.glide:glide", version.ref = "glide" }
 glide-compiler = { module = "com.github.bumptech.glide:compiler", version.ref = "glide" }
+play-services-maps3d = { group = "com.google.android.gms", name = "play-services-maps3d", version.ref = "playServicesMaps3d" }
+androidx-media3-extractor = { group = "androidx.media3", name = "media3-extractor", version.ref = "media3Extractor" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

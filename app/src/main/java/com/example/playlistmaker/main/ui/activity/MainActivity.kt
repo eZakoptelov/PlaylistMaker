@@ -35,7 +35,19 @@ class MainActivity : AppCompatActivity() {
             supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
         navController = navHostFragment.navController
         binding.bottomNav.setupWithNavController(navController)
+
+        navController.addOnDestinationChangedListener { _, destination, _ ->
+            when (destination.id) {
+                R.id.newPlaylistFragment, R.id.playerFragment -> {
+                    binding.bottomNav.isVisible = false
+                }
+                else -> {
+                    binding.bottomNav.isVisible = true
+                }
+            }
+        }
     }
+
 
     private fun setupWindowInsetsListener() {
         ViewCompat.setOnApplyWindowInsetsListener(binding.root) { view, windowInsets ->
@@ -43,16 +55,21 @@ class MainActivity : AppCompatActivity() {
             view.updatePadding(top = bars.top, bottom = bars.bottom)
 
             val isKeyboardVisible = windowInsets.isVisible(WindowInsetsCompat.Type.ime())
+            val hiddenDestinations = setOf(
+                R.id.newPlaylistFragment,
+                R.id.playerFragment
+            )
 
-            if (navController.currentDestination?.id != R.id.playerFragment) {
-                binding.bottomNav.isVisible = !isKeyboardVisible
-            } else {
+            if (navController.currentDestination?.id in hiddenDestinations) {
                 binding.bottomNav.isVisible = false
+            } else {
+                binding.bottomNav.isVisible = !isKeyboardVisible
             }
 
             WindowInsetsCompat.CONSUMED
         }
     }
+
     private fun handleBackPressWhenKeyboardOpen() {
         onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
