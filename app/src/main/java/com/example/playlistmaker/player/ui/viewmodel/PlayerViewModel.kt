@@ -1,13 +1,14 @@
 package com.example.playlistmaker.player.ui.viewmodel
 
+import android.app.Application
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.playlistmaker.R
 import com.example.playlistmaker.favorite.domain.interactor.FavoriteTracksInteractor
 import com.example.playlistmaker.player.domain.PlayerInteractor
 import com.example.playlistmaker.player.domain.PlayerRules
-import com.example.playlistmaker.playlists.data.converters.PlaylistTrackConverter
 import com.example.playlistmaker.playlists.domain.interactor.PlaylistInteractor
 import com.example.playlistmaker.playlists.domain.model.Playlist
 import com.example.playlistmaker.search.domain.model.TrackItem
@@ -19,12 +20,12 @@ import kotlinx.coroutines.launch
 import kotlin.time.Duration.Companion.milliseconds
 
 class PlayerViewModel(
+    application: Application,
     private val interactor: PlayerInteractor,
     val rules: PlayerRules,
     private val favoriteInteractor: FavoriteTracksInteractor,
-    private val playlistInteractor: PlaylistInteractor,
-    private val playlistConverter: PlaylistTrackConverter
-) : ViewModel() {
+    private val playlistInteractor: PlaylistInteractor
+) : AndroidViewModel(application) {
 
     private val _state = MutableLiveData<PlayerUiState>()
     val state: LiveData<PlayerUiState> = _state
@@ -39,6 +40,7 @@ class PlayerViewModel(
 
     private var currentTrack: TrackItem? = null
     private var progressJob: Job? = null
+    private var playlistsJob: Job? = null
     private var pendingPlay = false
 
     init {
@@ -57,7 +59,8 @@ class PlayerViewModel(
     }
 
     fun loadPlaylists() {
-        viewModelScope.launch {
+        playlistsJob?.cancel()
+        playlistsJob = viewModelScope.launch {
             playlistInteractor.getPlaylists().collect { playlists ->
                 _playlistsState.postValue(playlists)
             }
@@ -66,14 +69,16 @@ class PlayerViewModel(
 
     fun addTrackToPlaylist(playlist: Playlist) {
         val track = currentTrack ?: return
-        val trackIds = playlistConverter.jsonToTrackIds(playlist.trackIds)
-
-        if (track.trackId in trackIds) {
-            _addTrackStatus.postValue("Трек уже добавлен в плейлист ${playlist.name}")
-        } else {
-            viewModelScope.launch {
+        viewModelScope.launch {
+            if (playlistInteractor.isTrackInPlaylist(playlist.id, track.trackId)) {
+                _addTrackStatus.postValue(
+                    getApplication<Application>().getString(R.string.track_already_in_playlist, playlist.name)
+                )
+            } else {
                 playlistInteractor.addTrackToPlaylist(playlist, track)
-                _addTrackStatus.postValue("Добавлено в плейлист ${playlist.name}")
+                _addTrackStatus.postValue(
+                    getApplication<Application>().getString(R.string.track_added_to_playlist, playlist.name)
+                )
             }
         }
     }
@@ -121,18 +126,21 @@ class PlayerViewModel(
 
         if (track.previewUrl.isNullOrEmpty()) {
             _state.value = _state.value?.copy(
-                error = "Нет URL для воспроизведения"
+                error = getApplication<Application>().getString(R.string.no_preview_url)
             )
             return
         }
 
         interactor.load(
-            url = track.previewUrl!!,
+            url = track.previewUrl,
             onError = { e ->
                 _state.value = _state.value?.copy(
                     isPlaying = false,
                     isReady = false,
-                    error = "Ошибка воспроизведения: ${e.message ?: "Неизвестная ошибка"}"
+                    error = getApplication<Application>().getString(
+                        R.string.playback_error,
+                        e.message ?: getApplication<Application>().getString(R.string.unknown_error)
+                    )
                 )
             }
         )
@@ -146,13 +154,16 @@ class PlayerViewModel(
             currentTrack?.let { track ->
                 if (!track.previewUrl.isNullOrEmpty()) {
                     interactor.load(
-                        url = track.previewUrl!!,
+                        url = track.previewUrl,
                         onError = { e ->
                             pendingPlay = false
                             _state.value = _state.value?.copy(
                                 isPlaying = false,
                                 isReady = false,
-                                error = "Ошибка воспроизведения: ${e.message ?: "Неизвестная ошибка"}"
+                                error = getApplication<Application>().getString(
+                                    R.string.playback_error,
+                                    e.message ?: getApplication<Application>().getString(R.string.unknown_error)
+                                )
                             )
                         }
                     )
@@ -216,5 +227,6 @@ class PlayerViewModel(
         super.onCleared()
         interactor.release()
         stopProgressUpdate()
+        playlistsJob?.cancel()
     }
 }

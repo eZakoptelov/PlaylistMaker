@@ -1,4 +1,4 @@
-package com.example.playlistmaker.playlists.data.repository
+package com.example.playlistmaker.playlists.domain.repository
 
 import com.example.playlistmaker.playlists.domain.model.Playlist
 import com.example.playlistmaker.search.domain.model.TrackItem
@@ -9,4 +9,5 @@ interface PlaylistRepository {
     suspend fun updatePlaylist(playlist: Playlist)
     fun getPlaylists(): Flow<List<Playlist>>
     suspend fun addTrackToPlaylistWithTrack(playlist: Playlist, track: TrackItem)
+    suspend fun isTrackInPlaylist(playlistId: Long, trackId: Long): Boolean
 }

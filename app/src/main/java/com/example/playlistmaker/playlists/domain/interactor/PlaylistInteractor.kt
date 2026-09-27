@@ -1,7 +1,7 @@
 package com.example.playlistmaker.playlists.domain.interactor
 
 import com.example.playlistmaker.playlists.domain.model.Playlist
-import com.example.playlistmaker.playlists.data.repository.PlaylistRepository
+import com.example.playlistmaker.playlists.domain.repository.PlaylistRepository
 import com.example.playlistmaker.search.domain.model.TrackItem
 import kotlinx.coroutines.flow.Flow
 
@@ -28,5 +28,9 @@ class PlaylistInteractor(
 
     suspend fun addTrackToPlaylist(playlist: Playlist, track: TrackItem) {
         repository.addTrackToPlaylistWithTrack(playlist, track)
+    }
+
+    suspend fun isTrackInPlaylist(playlistId: Long, trackId: Long): Boolean {
+        return repository.isTrackInPlaylist(playlistId, trackId)
     }
 }

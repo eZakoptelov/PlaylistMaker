@@ -9,7 +9,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.FragmentPlaylistsBinding
-import com.example.playlistmaker.media.ui.adapter.PlaylistAdapter
+import com.example.playlistmaker.playlists.ui.adapter.PlaylistAdapter
 import com.example.playlistmaker.playlists.ui.adapter.GridSpacingItemDecoration
 import com.example.playlistmaker.playlists.ui.viewmodel.PlaylistsViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel

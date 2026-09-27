@@ -52,9 +52,10 @@ class PlayerFragment : Fragment() {
         bindViews()
 
         if (track == null) {
-            Toast.makeText(requireContext(), "Ошибка загрузки трека", Toast.LENGTH_SHORT).show()
+            Toast.makeText(requireContext(), getString(R.string.track_load_error), Toast.LENGTH_SHORT).show()
             return
         }
+
 
         viewModel.loadTrack(track!!)
         bindTrackData()

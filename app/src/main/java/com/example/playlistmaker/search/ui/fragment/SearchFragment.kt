@@ -144,7 +144,7 @@ class SearchFragment : Fragment() {
     private fun setupListeners() {
         binding.clearHistoryButton.setOnClickListener {
             viewModel.clearHistory()
-            Toast.makeText(requireContext(), "История очищена", Toast.LENGTH_SHORT).show()
+            Toast.makeText(requireContext(), getString(R.string.history_cleared), Toast.LENGTH_SHORT).show()
         }
 
         binding.buttonConnection.setOnClickListener {
@@ -152,7 +152,7 @@ class SearchFragment : Fragment() {
             if (text.isNotBlank()) {
                 viewModel.searchImmediately(text)
             } else {
-                Toast.makeText(requireContext(), "Нет запроса для повтора", Toast.LENGTH_SHORT)
+                Toast.makeText(requireContext(), getString(R.string.empty_search_query), Toast.LENGTH_SHORT)
                     .show()
             }
         }

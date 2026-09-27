@@ -22,6 +22,7 @@
     <color name="bottom_nav_active">#3772E7</color>
 
     <color name="text_primary">#FF000000</color>
+    <color name="bg_placeholder">#FFFFFFFF</color>
 
 
 </resources>

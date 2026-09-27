@@ -14,7 +14,7 @@ import com.example.playlistmaker.playlists.data.db.dao.TrackInPlaylistDao
 @Database(
     entities = [TrackEntity::class, PlaylistEntity::class,
         TrackInPlaylistEntity::class],
-    version = 4,
+    version = 5,
     exportSchema = false
 )
 abstract class AppDatabase : RoomDatabase() {

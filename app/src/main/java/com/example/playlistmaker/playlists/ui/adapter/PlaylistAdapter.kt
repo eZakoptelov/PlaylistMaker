@@ -1,12 +1,12 @@
-package com.example.playlistmaker.media.ui.adapter
+package com.example.playlistmaker.playlists.ui.adapter
 
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.CenterCrop
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
-import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.ItemPlaylistBinding
 import com.example.playlistmaker.playlists.domain.model.Playlist
 
@@ -33,19 +33,15 @@ class PlaylistAdapter(
             tvTrackCount.text = getTrackCountText(playlist.trackCount)
 
             val radius = (8 * root.context.resources.displayMetrics.density).toInt()
-
             if (playlist.coverPath.isNotEmpty()) {
-                Glide.with(root.context)
+                holder.binding.ivPlaceholder.visibility = View.GONE
+                Glide.with(holder.itemView.context)
                     .load(playlist.coverPath)
                     .transform(CenterCrop(), RoundedCorners(radius))
-                    .placeholder(R.drawable.ic_placeholder)
-                    .error(R.drawable.ic_placeholder)
-                    .into(ivPlaylistCover)
+                    .into(holder.binding.ivPlaylistCover)
             } else {
-                Glide.with(root.context)
-                    .load(R.drawable.ic_placeholder)
-                    .transform(CenterCrop(), RoundedCorners(radius))
-                    .into(ivPlaylistCover)
+                holder.binding.ivPlaceholder.visibility = View.VISIBLE
+                Glide.with(holder.itemView.context).clear(holder.binding.ivPlaylistCover)
             }
         }
     }
