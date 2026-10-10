@@ -1,7 +1,7 @@
 package com.example.playlistmaker.di
 
 import com.example.playlistmaker.favorite.data.db.AppDatabase
-import com.example.playlistmaker.favorite.data.dao.FavoriteTracksDao
+import com.example.playlistmaker.favorite.data.db.dao.FavoriteTracksDao
 import com.example.playlistmaker.favorite.data.repository.impl.FavoriteTracksRepositoryImpl
 import com.example.playlistmaker.favorite.domain.repository.FavoriteTracksRepository
 import com.example.playlistmaker.search.data.repository.impl.SearchRepositoryImpl

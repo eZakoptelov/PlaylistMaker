@@ -7,13 +7,13 @@ import com.example.playlistmaker.player.domain.impl.PlayerInteractorImpl
 import com.example.playlistmaker.player.domain.impl.PlayerRulesImpl
 import com.example.playlistmaker.player.domain.PlayerRules
 import com.example.playlistmaker.player.ui.viewmodel.PlayerViewModel
+import org.koin.android.ext.koin.androidApplication
 import org.koin.dsl.module
 import org.koin.androidx.viewmodel.dsl.viewModel
 
 val playerModule = module {
 
     factory { android.media.MediaPlayer() }
-
 
     factory<MediaPlayerWrapper> {
         LocalMediaPlayerImpl(get())
@@ -27,10 +27,11 @@ val playerModule = module {
 
     viewModel {
         PlayerViewModel(
+            androidApplication(),
             interactor = get(),
             rules = get(),
-            favoriteInteractor = get()
+            favoriteInteractor = get(),
+            playlistInteractor = get()
         )
     }
 }
-

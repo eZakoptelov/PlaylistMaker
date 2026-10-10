@@ -9,6 +9,7 @@ import androidx.viewpager2.adapter.FragmentStateAdapter
 import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.FragmentMediaBinding
 import com.example.playlistmaker.favorite.ui.fragment.FragmentFavorites
+import com.example.playlistmaker.playlists.ui.fragment.PlaylistsFragment
 import com.google.android.material.tabs.TabLayoutMediator
 
 class MediaFragment : Fragment() {
@@ -35,7 +36,7 @@ class MediaFragment : Fragment() {
             override fun getItemCount(): Int = 2
             override fun createFragment(position: Int): Fragment = when (position) {
                 0 -> FragmentFavorites.newInstance()
-                1 -> FragmentPlaylists.newInstance()
+                1 -> PlaylistsFragment.newInstance()
                 else -> throw IllegalArgumentException("Unknown position")
             }
         }

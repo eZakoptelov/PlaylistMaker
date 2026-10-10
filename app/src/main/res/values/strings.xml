@@ -46,6 +46,28 @@
     <string name="tab_playlists">Плейлисты</string>
     <string name="tab_favorites">Избранные треки</string>
     <string name="Mediateka">Медиатека</string>
+    <string name="title">Название*</string>
+    <string name="description">Описание</string>
+    <string name="create">Создать</string>
+    <string name="playlist_created">Плейлист «%1$s» создан</string>
+    <string name="exit_dialog_title">Завершить создание плейлиста?</string>
+    <string name="exit_dialog_message">Все несохраненные данные будут потеряны</string>
+    <string name="exit_dialog_cancel">Отмена</string>
+    <string name="exit_dialog_confirm">Завершить</string>
+    <string name="image_load_error">Не удалось загрузить изображение</string>
+    <string name="track_load_error">Ошибка загрузки трека</string>
+    <string name="history_cleared">История очищена</string>
+    <string name="empty_search_query">Нет запроса для повтора</string>
+    <string name="track_already_in_playlist">Трек уже добавлен в плейлист «%1$s»</string>
+    <string name="track_added_to_playlist">Добавлено в плейлист «%1$s»</string>
+    <string name="no_preview_url">Нет URL для воспроизведения</string>
+    <string name="playback_error">Ошибка воспроизведения: %1$s</string>
+    <string name="unknown_error">Неизвестная ошибка</string>
+
+
+
+
+
 
 
 </resources>

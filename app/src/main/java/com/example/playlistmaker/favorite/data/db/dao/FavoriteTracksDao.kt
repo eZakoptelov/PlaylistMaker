@@ -1,4 +1,4 @@
-package com.example.playlistmaker.favorite.data.dao
+package com.example.playlistmaker.favorite.data.db.dao
 
 import androidx.room.Dao
 import androidx.room.Delete
