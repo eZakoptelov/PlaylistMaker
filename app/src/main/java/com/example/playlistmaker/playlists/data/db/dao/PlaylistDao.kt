@@ -15,13 +15,13 @@ interface PlaylistDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertPlaylist(playlist: PlaylistEntity): Long
-
     @Query("SELECT * FROM playlist_table WHERE id = :id")
-    suspend fun getPlaylistById(id: Long): PlaylistEntity
+    suspend fun getPlaylistById(id: Long): PlaylistEntity?
+
 
     @Transaction
-    @Query("SELECT * FROM playlist_table WHERE id = :playlistId")
-    suspend fun getPlaylistWithTracks(playlistId: Long): PlaylistWithTracks
+    @Query("""SELECT * FROM playlist_table WHERE id = :playlistId""")
+    suspend fun getPlaylistWithTracks(playlistId: Long): PlaylistWithTracks?
 
     @Transaction
     @Query("SELECT * FROM playlist_table ORDER BY id DESC")

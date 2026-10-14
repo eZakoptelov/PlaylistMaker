@@ -313,6 +313,15 @@
         <item name="cornerSize">8dp</item>
     </style>
 
+    <style name="DeleteTrackDialog" parent="ThemeOverlay.Material3.MaterialAlertDialog">
+        <item name="shapeAppearanceOverlay">@style/DeleteTrackDialogShape</item>
+    </style>
+
+    <style name="DeleteTrackDialogShape">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerRadius">4dp</item>
+    </style>
+
 
 
 

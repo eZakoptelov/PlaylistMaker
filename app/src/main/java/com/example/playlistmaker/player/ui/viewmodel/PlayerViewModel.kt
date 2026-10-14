@@ -7,8 +7,8 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.example.playlistmaker.R
 import com.example.playlistmaker.favorite.domain.interactor.FavoriteTracksInteractor
-import com.example.playlistmaker.player.domain.PlayerInteractor
 import com.example.playlistmaker.player.domain.PlayerRules
+import com.example.playlistmaker.player.domain.intaractor.PlayerInteractor
 import com.example.playlistmaker.playlists.domain.interactor.PlaylistInteractor
 import com.example.playlistmaker.playlists.domain.model.Playlist
 import com.example.playlistmaker.search.domain.model.TrackItem

@@ -20,37 +20,45 @@ class SettingsViewModel(
 
     private fun loadState() {
         val isDark = settingsUseCase.getDarkTheme()
-        val shareText = settingsUseCase.getShareText()
-        _state.value = SettingsUiState.Content(isDark, shareText)
+        _state.value = SettingsUiState.Content(isDark)
     }
 
     fun processInput(intent: SettingsUiIntent) {
         when (intent) {
-            is SettingsUiIntent.BackClicked -> _state.value = SettingsUiState.FinishActivity
+            is SettingsUiIntent.BackClicked -> {
+                _state.value = SettingsUiState.FinishActivity
+            }
+
             is SettingsUiIntent.ShareAppClicked -> shareApp()
+
             is SettingsUiIntent.SupportClicked -> openSupport()
+
             is SettingsUiIntent.AgreementClicked -> openAgreement()
+
             is SettingsUiIntent.ThemeToggled -> toggleTheme(intent.isChecked)
         }
     }
 
     fun toggleTheme(isDark: Boolean) {
         settingsUseCase.setDarkTheme(isDark)
-
-        // Сохраняем текущий shareText, чтобы не потерять его при обновлении состояния
-        val currentShareText = (_state.value as? SettingsUiState.Content)?.shareText ?: ""
-        _state.value = SettingsUiState.Content(isDark, currentShareText)
+        _state.value = SettingsUiState.Content(isDark)
     }
 
     fun shareApp() {
-        _state.value = SettingsUiState.LaunchIntent(sharingUseCase.shareApp())
+        _state.value = SettingsUiState.LaunchIntent(
+            sharingUseCase.shareApp()
+        )
     }
 
     fun openSupport() {
-        _state.value = SettingsUiState.LaunchIntent(sharingUseCase.openSupport())
+        _state.value = SettingsUiState.LaunchIntent(
+            sharingUseCase.openSupport()
+        )
     }
 
     fun openAgreement() {
-        _state.value = SettingsUiState.LaunchIntent(sharingUseCase.openAgreement())
+        _state.value = SettingsUiState.LaunchIntent(
+            sharingUseCase.openAgreement()
+        )
     }
 }

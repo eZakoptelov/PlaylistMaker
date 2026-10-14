@@ -2,6 +2,7 @@ package com.example.playlistmaker.playlists.ui.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.CenterCrop
@@ -15,7 +16,7 @@ class BottomSheetPlaylistAdapter(
     private val onClick: (Playlist) -> Unit
 ) : RecyclerView.Adapter<BottomSheetPlaylistAdapter.ViewHolder>() {
 
-    inner class ViewHolder(val binding: ItemPlaylistBottomSheetBinding) :
+    class ViewHolder(val binding: ItemPlaylistBottomSheetBinding) :
         RecyclerView.ViewHolder(binding.root)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -29,7 +30,11 @@ class BottomSheetPlaylistAdapter(
         val playlist = playlists[position]
         with(holder.binding) {
             tvPlaylistName.text = playlist.name
-            tvTrackCount.text = getTrackCountText(playlist.trackCount)
+            tvTrackCount.text = root.context.resources.getQuantityString(
+                R.plurals.playlist_track_count,
+                playlist.trackCount,
+                playlist.trackCount
+            )
 
             val radius = (8 * root.context.resources.displayMetrics.density).toInt()
 
@@ -54,18 +59,40 @@ class BottomSheetPlaylistAdapter(
 
     override fun getItemCount(): Int = playlists.size
 
+
     fun updatePlaylists(newPlaylists: List<Playlist>) {
+        val diffResult = DiffUtil.calculateDiff(
+            PlaylistDiffCallback(playlists.toList(), newPlaylists)
+        )
+
         playlists.clear()
         playlists.addAll(newPlaylists)
-        notifyDataSetChanged()
-    }
 
-    private fun getTrackCountText(count: Int): String {
-        val plural = when {
-            count % 10 == 1 && count % 100 != 11 -> "трек"
-            count % 10 in 2..4 && count % 100 !in 12..14 -> "трека"
-            else -> "треков"
+        diffResult.dispatchUpdatesTo(this)
+    }
+    private class PlaylistDiffCallback(
+        private val oldList: List<Playlist>,
+        private val newList: List<Playlist>
+    ) : DiffUtil.Callback() {
+
+        override fun getOldListSize(): Int = oldList.size
+
+        override fun getNewListSize(): Int = newList.size
+
+        override fun areItemsTheSame(
+            oldItemPosition: Int,
+            newItemPosition: Int
+        ): Boolean {
+            return oldList[oldItemPosition].id ==
+                    newList[newItemPosition].id
         }
-        return "$count $plural"
+
+        override fun areContentsTheSame(
+            oldItemPosition: Int,
+            newItemPosition: Int
+        ): Boolean {
+            return oldList[oldItemPosition] ==
+                    newList[newItemPosition]
+        }
     }
 }

@@ -3,63 +3,93 @@
     android:id="@+id/nav_graph"
     app:startDestination="@id/mediaFragment">
 
+    <!-- Поиск треков -->
     <fragment
         android:id="@+id/searchFragment"
         android:name="com.example.playlistmaker.search.ui.fragment.SearchFragment"
         android:label="Поиск">
-
         <action
             android:id="@+id/action_searchFragment_to_playerFragment"
-            app:destination="@id/playerFragment">
-            <argument
-                android:name="track"
-                app:argType="com.example.playlistmaker.search.domain.model.TrackItem"
-                app:nullable="true" />
-        </action>
+            app:destination="@id/playerFragment" />
     </fragment>
 
+    <!-- Медиатека -->
     <fragment
         android:id="@+id/mediaFragment"
         android:name="com.example.playlistmaker.media.ui.fragment.MediaFragment"
         android:label="Медиатека">
-
         <action
             android:id="@+id/action_mediaFragment_to_playerFragment"
-            app:destination="@id/playerFragment">
-            <argument
-                android:name="track"
-                app:argType="com.example.playlistmaker.search.domain.model.TrackItem"
-                app:nullable="true" />
-        </action>
-        <action
-            android:id="@+id/action_mediaFragment_to_newPlaylistFragment"
-            app:destination="@id/newPlaylistFragment" />
-
+            app:destination="@id/playerFragment" />
+        <action android:id="@+id/action_mediaFragment_to_newPlaylistFragment" app:destination="@id/newPlaylistFragment" />
+        <action android:id="@+id/action_mediaFragment_to_playlistFragment" app:destination="@id/playlistFragment" />
     </fragment>
 
     <fragment
         android:id="@+id/newPlaylistFragment"
         android:name="com.example.playlistmaker.playlists.ui.fragment.NewPlaylistFragment"
-        android:label="Новый плейлист" />
+        android:label="NewPlaylistFragment">
 
+        <argument
+            android:name="playlistId"
+            app:argType="long" />
+
+    </fragment>
+
+    <!-- Плеер -->
     <fragment
         android:id="@+id/playerFragment"
         android:name="com.example.playlistmaker.player.ui.fragment.PlayerFragment"
         android:label="Плеер">
-        <action
-            android:id="@+id/action_playerFragment_to_newPlaylistFragment"
-            app:destination="@id/newPlaylistFragment" />
+        <argument
+            android:name="trackId"
+            app:argType="long"
+            app:nullable="false" />
+
+        <action android:id="@+id/action_playerFragment_to_newPlaylistFragment" app:destination="@id/newPlaylistFragment" />
     </fragment>
 
+    <fragment android:id="@+id/settingsFragment" android:name="com.example.playlistmaker.settings.ui.fragment.SettingsFragment" android:label="Настройки" />
 
-    <fragment
-        android:id="@+id/settingsFragment"
-        android:name="com.example.playlistmaker.settings.ui.fragment.SettingsFragment"
-        android:label="Настройки" />
 
     <fragment
         android:id="@+id/favoritesFragment"
         android:name="com.example.playlistmaker.favorite.ui.fragment.FragmentFavorites"
-        android:label="Избранные треки" />
+        android:label="Избранные треки">
 
+        <action
+            android:id="@+id/action_favoritesFragment_to_playerFragment"
+            app:destination="@id/playerFragment" />
+
+    </fragment>
+
+
+    <!-- Список плейлистов -->
+    <fragment
+        android:id="@+id/playlistsFragment"
+        android:name="com.example.playlistmaker.playlists.ui.fragment.PlaylistsFragment"
+        android:label="Плейлисты">
+
+        <action
+            android:id="@+id/action_playlistsFragment_to_playlistFragment"
+            app:destination="@id/playlistFragment" />
+
+        <action
+            android:id="@+id/action_playlistsFragment_to_newPlaylistFragment"
+            app:destination="@id/newPlaylistFragment" />
+    </fragment>
+
+    <!-- Детальная страница плейлиста -->
+    <fragment
+        android:id="@+id/playlistFragment"
+        android:name="com.example.playlistmaker.playlists.ui.fragment.PlaylistFragment"
+        android:label="Просмотр плейлиста">
+        <argument android:name="playlistId" app:argType="long" />
+
+        <action
+            android:id="@+id/action_playlistFragment_to_playerFragment"
+            app:destination="@id/playerFragment">
+            <argument android:name="trackId" app:argType="long" />
+        </action>
+    </fragment>
 </navigation>

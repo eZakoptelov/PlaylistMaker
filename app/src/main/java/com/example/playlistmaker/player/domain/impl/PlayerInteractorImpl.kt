@@ -1,7 +1,7 @@
 package com.example.playlistmaker.player.domain.impl
 
 import com.example.playlistmaker.player.domain.MediaPlayerWrapper
-import com.example.playlistmaker.player.domain.PlayerInteractor
+import com.example.playlistmaker.player.domain.intaractor.PlayerInteractor
 import com.example.playlistmaker.search.domain.model.TrackItem
 
 class PlayerInteractorImpl(

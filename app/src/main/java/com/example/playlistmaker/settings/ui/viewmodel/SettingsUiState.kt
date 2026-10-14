@@ -3,11 +3,11 @@ package com.example.playlistmaker.settings.ui.viewmodel
 import android.content.Intent
 
 sealed class SettingsUiState {
-data class Content(
+
+    data class Content(
         val isDark: Boolean,
-        val shareText: String,
         val applyLocalTheme: Boolean = false
-) : SettingsUiState()
+    ) : SettingsUiState()
 
     data class LaunchIntent(val intent: Intent) : SettingsUiState()
 

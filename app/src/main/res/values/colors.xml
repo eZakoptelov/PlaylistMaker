@@ -24,5 +24,9 @@
     <color name="text_primary">#FF000000</color>
     <color name="bg_placeholder">#FFFFFFFF</color>
 
+    <color name="playlist_sheet_background">#FFFFFFFF</color>
+    <color name="playlist_menu_text">#FF000000</color>
+    <color name="playlist_menu_track_time">#FF000000</color>
+
 
 </resources>

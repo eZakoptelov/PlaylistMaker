@@ -22,11 +22,14 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
 import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.FragmentNewPlaylistBinding
 import com.example.playlistmaker.playlists.ui.viewmodel.NewPlaylistViewModel
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import java.io.File
+import android.graphics.Matrix
+import androidx.exifinterface.media.ExifInterface
 import java.io.FileOutputStream
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -39,6 +42,10 @@ class NewPlaylistFragment : Fragment() {
     private val binding get() = _binding!!
 
     private val viewModel: NewPlaylistViewModel by viewModel()
+    private val args: NewPlaylistFragmentArgs by navArgs()
+
+    private val isEditMode: Boolean
+        get() = args.playlistId > 0L
 
     private var savedImagePath: String? = null
     private var hasImage = false
@@ -83,6 +90,14 @@ class NewPlaylistFragment : Fragment() {
         setupImagePicker()
         setupTextWatcher()
         setupBackPressedCallback()
+        observePlaylistCreation()
+        observePlaylistUpdate()
+
+        if (isEditMode) {
+            setupEditMode()
+            observePlaylistLoading()
+            viewModel.loadPlaylist(args.playlistId)
+        }
     }
 
     private fun setupBackButton() {
@@ -91,27 +106,33 @@ class NewPlaylistFragment : Fragment() {
 
     private fun setupCreateButton() {
         binding.btnCreate.setOnClickListener {
+            val name = binding.etPlaylistName.text.toString().trim()
+            val description = binding.etPlaylistDescription.text.toString().trim()
+
+            if (name.isBlank()) return@setOnClickListener
+
             binding.btnCreate.isEnabled = false
-
-            val name = binding.etPlaylistName.text?.toString().orEmpty()
-            val description = binding.etPlaylistDescription.text?.toString().orEmpty()
-
-            viewModel.createPlaylist(name, description, savedImagePath)
 
             binding.etPlaylistName.clearFocus()
             binding.etPlaylistDescription.clearFocus()
             hideKeyboard()
 
-            findNavController().popBackStack()
-
-            Toast.makeText(
-                requireContext(),
-                getString(R.string.playlist_created, name),
-                Toast.LENGTH_SHORT
-            ).show()
+            if (isEditMode) {
+                viewModel.updatePlaylist(
+                    playlistId = args.playlistId,
+                    name = name,
+                    description = description,
+                    coverPath = savedImagePath.orEmpty()
+                )
+            } else {
+                viewModel.createPlaylist(
+                    name = name,
+                    description = description,
+                    coverPath = savedImagePath
+                )
+            }
         }
     }
-
     private fun setupImagePicker() {
         binding.ivPlaylistCover.setOnClickListener {
             pickMedia.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
@@ -145,7 +166,9 @@ class NewPlaylistFragment : Fragment() {
         val name = binding.etPlaylistName.text?.toString().orEmpty()
         val description = binding.etPlaylistDescription.text?.toString().orEmpty()
 
-        if (name.isNotBlank() || description.isNotBlank() || hasImage) {
+        if (isEditMode) {
+            findNavController().popBackStack()
+        } else if (name.isNotBlank() || description.isNotBlank() || hasImage) {
             showExitDialog()
         } else {
             findNavController().popBackStack()
@@ -168,7 +191,9 @@ class NewPlaylistFragment : Fragment() {
 
         dialog.window?.setBackgroundDrawableResource(R.drawable.dialog_background)
 
-        dialog.findViewById<TextView>(android.R.id.title)?.setTextColor(
+        dialog.findViewById<TextView>(
+            com.google.android.material.R.id.alertTitle
+        )?.setTextColor(
             ContextCompat.getColor(requireContext(), R.color.black)
         )
         dialog.findViewById<TextView>(android.R.id.message)?.setTextColor(
@@ -186,29 +211,142 @@ class NewPlaylistFragment : Fragment() {
         val imm = requireContext().getSystemService(InputMethodManager::class.java)
         imm.hideSoftInputFromWindow(binding.root.windowToken, 0)
     }
-
     private suspend fun saveImageToPrivateStorage(uri: Uri): String? {
         return withContext(Dispatchers.IO) {
-            val filePath = File(
-                requireContext().getExternalFilesDir(Environment.DIRECTORY_PICTURES),
-                "myalbum"
-            )
-            if (!filePath.exists()) { filePath.mkdirs() }
-            val file = File(filePath, "cover_${System.currentTimeMillis()}.jpg")
+            try {
+                val context = requireContext().applicationContext
+                val resolver = context.contentResolver
+                val rotation = resolver.openInputStream(uri)?.use { stream ->
+                    ExifInterface(stream).rotationDegrees
+                } ?: return@withContext null
+                val bitmap = resolver.openInputStream(uri)?.use { stream ->
+                    BitmapFactory.decodeStream(stream)
+                } ?: return@withContext null
+                val correctedBitmap = if (rotation != 0) {
+                    val matrix = Matrix().apply {
+                        postRotate(rotation.toFloat())
+                    }
 
-            val inputStream = requireContext().contentResolver.openInputStream(uri)
-            val bitmap = BitmapFactory.decodeStream(inputStream)
-            inputStream?.close()
+                    Bitmap.createBitmap(
+                        bitmap,
+                        0,
+                        0,
+                        bitmap.width,
+                        bitmap.height,
+                        matrix,
+                        true
+                    ).also {
+                        if (it !== bitmap) bitmap.recycle()
+                    }
+                } else {
+                    bitmap
+                }
 
-            if (bitmap == null) {
-                return@withContext null
+                val directory = File(
+                    context.getExternalFilesDir(Environment.DIRECTORY_PICTURES),
+                    "myalbum"
+                )
+
+                if (!directory.exists() && !directory.mkdirs()) {
+                    correctedBitmap.recycle()
+                    return@withContext null
+                }
+
+                val file = File(
+                    directory,
+                    "cover_${System.currentTimeMillis()}.jpg"
+                )
+
+                val saved = FileOutputStream(file).use { output ->
+                    correctedBitmap.compress(
+                        Bitmap.CompressFormat.JPEG,
+                        80,
+                        output
+                    )
+                }
+
+                correctedBitmap.recycle()
+
+                if (saved) file.absolutePath else null
+            } catch (_: Exception) {
+                null
             }
+        }
+    }
+    private fun observePlaylistCreation() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.playlistCreated.collect { name ->
+                binding.btnCreate.isEnabled = true
 
-            FileOutputStream(file).use { out ->
-                bitmap.compress(Bitmap.CompressFormat.JPEG, 80, out)
+                if (name.isNotEmpty()) {
+                    Toast.makeText(
+                        requireContext(),
+                        getString(R.string.playlist_created, name),
+                        Toast.LENGTH_SHORT
+                    ).show()
+
+                    findNavController().popBackStack()
+                } else {
+                    Toast.makeText(
+                        requireContext(),
+                        (R.string.playlist_create_error),
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
             }
+        }
+    }
+    private fun setupEditMode() {
+        binding.tvNewPlaylist.setText(R.string.edit_playlist)
+        binding.btnCreate.setText(R.string.save_playlist)
+    }
 
-            file.absolutePath
+    private fun observePlaylistLoading() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.playlistLoaded.collect { playlist ->
+                if (playlist.id != args.playlistId) return@collect
+
+                binding.etPlaylistName.setText(playlist.name)
+                binding.etPlaylistDescription.setText(playlist.description)
+
+                savedImagePath = playlist.coverPath
+                hasImage = playlist.coverPath.isNotBlank()
+
+                if (playlist.coverPath.isNotBlank()) {
+                    val file = File(playlist.coverPath)
+                    if (file.exists()) {
+                        binding.ivPlaylistCover.setImageURI(Uri.fromFile(file))
+                        binding.ivPlaylistCover.scaleType = ImageView.ScaleType.CENTER_CROP
+                        binding.ivPlaylistCover.background = null
+                    }
+                }
+
+                binding.btnCreate.isEnabled = playlist.name.isNotBlank()
+            }
+        }
+    }
+    private fun observePlaylistUpdate() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.playlistUpdated.collect { success ->
+                binding.btnCreate.isEnabled =
+                    binding.etPlaylistName.text.toString().isNotBlank()
+
+                if (success) {
+                    Toast.makeText(
+                        requireContext(),
+                        getString(R.string.playlist_update_success),
+                        Toast.LENGTH_SHORT
+                    ).show()
+
+                    findNavController().popBackStack()
+                } else {
+                    Toast.makeText(
+                        requireContext(),
+                        getString(R.string.playlist_update_error),
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+            }
         }
     }
 

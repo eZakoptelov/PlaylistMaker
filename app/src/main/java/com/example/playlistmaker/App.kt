@@ -7,6 +7,7 @@ import com.example.playlistmaker.di.interactorModule
 import com.example.playlistmaker.di.mediaModule
 import com.example.playlistmaker.di.mediapoolModule
 import com.example.playlistmaker.di.playerModule
+import com.example.playlistmaker.di.playlistsModule
 import com.example.playlistmaker.di.repositoryModule
 import com.example.playlistmaker.di.searchModule
 import com.example.playlistmaker.di.settingsModule
@@ -31,7 +32,8 @@ class App : Application() {
                 mediaModule,
                 dataModule,
                 repositoryModule,
-                interactorModule
+                interactorModule,
+                playlistsModule
 
             )
         }
