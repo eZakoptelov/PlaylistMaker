@@ -32,7 +32,8 @@
 
         <argument
             android:name="playlistId"
-            app:argType="long" />
+            app:argType="long"
+            android:defaultValue="-1L"/>
 
     </fragment>
 

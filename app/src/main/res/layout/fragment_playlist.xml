@@ -255,7 +255,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:fontFamily="@font/ys_display_regular"
-                    android:textColor="@color/playlist_menu_track_time"
+                    android:textColor="@color/grey"
                     android:textSize="@dimen/text_size_11"
                     tools:text="98 треков" />
 

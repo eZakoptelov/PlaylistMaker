@@ -88,7 +88,14 @@ class PlaylistRepositoryImpl(
         playlistId: Long,
         trackId: Long
     ) {
+
         trackInPlaylistDao.removeTrackFromPlaylist(playlistId, trackId)
+
+        val playlistsWithTrack = trackInPlaylistDao.getPlaylistsWithTrack(trackId)
+
+        if (playlistsWithTrack.isEmpty()) {
+            trackInPlaylistDao.deleteTrackRelationsByTrackId(trackId)
+        }
     }
     override suspend fun getTracksByIds(
         trackIds: List<Long>

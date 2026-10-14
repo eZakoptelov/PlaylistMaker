@@ -176,7 +176,10 @@ class NewPlaylistFragment : Fragment() {
     }
 
     private fun showExitDialog() {
-        val dialog = MaterialAlertDialogBuilder(requireContext())
+        val dialog = MaterialAlertDialogBuilder(
+            requireContext(),
+            R.style.Theme_PlaylistMaker_AlertDialog
+        )
             .setTitle(R.string.exit_dialog_title)
             .setMessage(R.string.exit_dialog_message)
             .setNegativeButton(R.string.exit_dialog_cancel) { d, _ -> d.dismiss() }
@@ -191,11 +194,6 @@ class NewPlaylistFragment : Fragment() {
 
         dialog.window?.setBackgroundDrawableResource(R.drawable.dialog_background)
 
-        dialog.findViewById<TextView>(
-            com.google.android.material.R.id.alertTitle
-        )?.setTextColor(
-            ContextCompat.getColor(requireContext(), R.color.black)
-        )
         dialog.findViewById<TextView>(android.R.id.message)?.setTextColor(
             ContextCompat.getColor(requireContext(), R.color.black)
         )
