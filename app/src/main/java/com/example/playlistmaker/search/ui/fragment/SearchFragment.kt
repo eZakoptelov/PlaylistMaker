@@ -13,7 +13,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.FragmentSearchBinding
 import com.example.playlistmaker.search.domain.model.TrackItem
-import com.example.playlistmaker.search.ui.adapter.OnItemClickListener
 import com.example.playlistmaker.search.ui.adapter.TrackAdapter
 import com.example.playlistmaker.search.ui.viewmodel.SearchUiState
 import com.example.playlistmaker.search.ui.viewmodel.SearchViewModel
@@ -206,14 +205,17 @@ class SearchFragment : Fragment() {
         adapter.setOnItemClickListener(onItemClick)
         historyAdapter.setOnItemClickListener(onItemClick)
     }
-
     private fun openPlayerFragment(track: TrackItem) {
         val bundle = Bundle().apply {
+            putLong("trackId", track.trackId)
             putParcelable("track", track)
         }
-        findNavController().navigate(R.id.action_searchFragment_to_playerFragment, bundle)
-    }
 
+        findNavController().navigate(
+            R.id.action_searchFragment_to_playerFragment,
+            bundle
+        )
+    }
     private fun hideKeyboard(view: View) {
         val inputMethodManager =
             requireContext().getSystemService(android.content.Context.INPUT_METHOD_SERVICE) as android.view.inputmethod.InputMethodManager

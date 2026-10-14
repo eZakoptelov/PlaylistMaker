@@ -27,7 +27,6 @@ class SearchViewModel(
 
     private var searchJob: Job? = null
 
-    // Отложенный поиск (при вводе текста)
     fun searchDebounce(query: String) {
         searchJob?.cancel()
         searchJob = viewModelScope.launch {
@@ -36,7 +35,6 @@ class SearchViewModel(
         }
     }
 
-    // Мгновенный поиск (при нажатии «Готово» или кнопки повтора)
     fun searchImmediately(query: String) {
         searchJob?.cancel()
         searchJob = viewModelScope.launch {

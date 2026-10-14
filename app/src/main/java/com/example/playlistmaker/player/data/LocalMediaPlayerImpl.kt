@@ -22,8 +22,6 @@ class LocalMediaPlayerImpl(
         onError: (Exception) -> Unit
     ) {
         try {
-            // reset() допустим, если мы осознанно хотим переиспользовать экземпляр.
-            // Но помни: после reset() плеер в состоянии UNINITIALIZED.
             mediaPlayer.reset()
             mediaPlayer.setDataSource(url)
 

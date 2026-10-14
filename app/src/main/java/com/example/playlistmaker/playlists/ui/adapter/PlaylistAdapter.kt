@@ -3,18 +3,21 @@ package com.example.playlistmaker.playlists.ui.adapter
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.CenterCrop
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
+import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.ItemPlaylistBinding
 import com.example.playlistmaker.playlists.domain.model.Playlist
 
 class PlaylistAdapter(
+    private val onItemClick: (Long) -> Unit,
     private val playlists: MutableList<Playlist> = mutableListOf()
 ) : RecyclerView.Adapter<PlaylistAdapter.PlaylistViewHolder>() {
 
-    inner class PlaylistViewHolder(val binding: ItemPlaylistBinding) :
+    class PlaylistViewHolder(val binding: ItemPlaylistBinding) :
         RecyclerView.ViewHolder(binding.root)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PlaylistViewHolder {
@@ -28,38 +31,70 @@ class PlaylistAdapter(
 
     override fun onBindViewHolder(holder: PlaylistViewHolder, position: Int) {
         val playlist = playlists[position]
+
+        holder.itemView.setOnClickListener {
+            onItemClick(playlist.id)
+        }
+
         with(holder.binding) {
             tvPlaylistName.text = playlist.name
-            tvTrackCount.text = getTrackCountText(playlist.trackCount)
+            tvTrackCount.text = root.context.resources.getQuantityString(
+                R.plurals.playlist_track_count,
+                playlist.trackCount,
+                playlist.trackCount
+            )
 
             val radius = (8 * root.context.resources.displayMetrics.density).toInt()
             if (playlist.coverPath.isNotEmpty()) {
-                holder.binding.ivPlaceholder.visibility = View.GONE
+                ivPlaceholder.visibility = View.GONE
                 Glide.with(holder.itemView.context)
                     .load(playlist.coverPath)
                     .transform(CenterCrop(), RoundedCorners(radius))
-                    .into(holder.binding.ivPlaylistCover)
+                    .into(ivPlaylistCover)
             } else {
-                holder.binding.ivPlaceholder.visibility = View.VISIBLE
-                Glide.with(holder.itemView.context).clear(holder.binding.ivPlaylistCover)
+                ivPlaceholder.visibility = View.VISIBLE
+                Glide.with(holder.itemView.context).clear(ivPlaylistCover)
             }
         }
     }
 
     override fun getItemCount(): Int = playlists.size
 
+
     fun updatePlaylists(newPlaylists: List<Playlist>) {
+        val diffResult = DiffUtil.calculateDiff(
+            PlaylistDiffCallback(playlists.toList(), newPlaylists)
+        )
+
         playlists.clear()
         playlists.addAll(newPlaylists)
-        notifyDataSetChanged()
+
+        diffResult.dispatchUpdatesTo(this)
     }
 
-    private fun getTrackCountText(count: Int): String {
-        val plural = when {
-            count % 10 == 1 && count % 100 != 11 -> "трек"
-            count % 10 in 2..4 && count % 100 !in 12..14 -> "трека"
-            else -> "треков"
+    private class PlaylistDiffCallback(
+        private val oldList: List<Playlist>,
+        private val newList: List<Playlist>
+    ) : DiffUtil.Callback() {
+
+        override fun getOldListSize(): Int = oldList.size
+
+        override fun getNewListSize(): Int = newList.size
+
+        override fun areItemsTheSame(
+            oldItemPosition: Int,
+            newItemPosition: Int
+        ): Boolean {
+            return oldList[oldItemPosition].id ==
+                    newList[newItemPosition].id
         }
-        return "$count $plural"
+
+        override fun areContentsTheSame(
+            oldItemPosition: Int,
+            newItemPosition: Int
+        ): Boolean {
+            return oldList[oldItemPosition] ==
+                    newList[newItemPosition]
+        }
     }
 }

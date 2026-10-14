@@ -2,7 +2,7 @@ package com.example.playlistmaker.di
 
 import com.example.playlistmaker.player.data.LocalMediaPlayerImpl
 import com.example.playlistmaker.player.domain.MediaPlayerWrapper
-import com.example.playlistmaker.player.domain.PlayerInteractor
+import com.example.playlistmaker.player.domain.intaractor.PlayerInteractor
 import com.example.playlistmaker.player.domain.impl.PlayerInteractorImpl
 import com.example.playlistmaker.player.domain.impl.PlayerRulesImpl
 import com.example.playlistmaker.player.domain.PlayerRules

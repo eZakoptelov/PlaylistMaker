@@ -2,12 +2,13 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     id("kotlin-parcelize")
-    id("com.google.devtools.ksp")
+    id("androidx.navigation.safeargs.kotlin") version "2.8.8"
+    alias(libs.plugins.ksp)
 }
 
 android {
     namespace = "com.example.playlistmaker"
-    compileSdk = 36
+    compileSdk = 37
 
     defaultConfig {
         applicationId = "com.example.playlistmaker"
@@ -28,26 +29,21 @@ android {
         }
     }
 
-    // Единый источник истины для JVM target
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
     }
 
-    kotlin {
-        jvmToolchain(17)
-        compilerOptions {
-            jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_17)
-        }
-    }
     buildFeatures {
         viewBinding = true
     }
 }
 
 
+
 dependencies {
     implementation(libs.androidx.appcompat)
+    implementation(libs.androidx.exifinterface)
     implementation(libs.androidx.media3.extractor)
     implementation(libs.material)
     implementation(libs.play.services.maps)
@@ -55,9 +51,13 @@ dependencies {
     implementation(libs.androidx.constraintlayout)
     implementation(libs.androidx.preference.ktx)
     implementation(libs.play.services.maps3d)
+
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
+
+    // Генератор Safe Args под KSP — обязательно
+    ksp(libs.androidx.navigation.safe.args.generator)
 
     // Retrofit + Gson
     implementation(libs.retrofit)
@@ -76,16 +76,15 @@ dependencies {
     implementation(libs.androidx.navigation.fragment.ktx)
     implementation(libs.androidx.navigation.ui.ktx)
 
-    //  Fragment и Core
+    // Fragment и Core
     implementation(libs.androidx.fragment.ktx)
     implementation(libs.androidx.core.ktx)
 
     // Корутины
     implementation(libs.kotlinx.coroutines.android)
 
-    // Библиотека Room
+    // Room
     implementation(libs.androidx.room.runtime)
     ksp(libs.androidx.room.compiler)
     implementation(libs.androidx.room.ktx)
 }
-

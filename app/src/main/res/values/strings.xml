@@ -63,11 +63,53 @@
     <string name="no_preview_url">Нет URL для воспроизведения</string>
     <string name="playback_error">Ошибка воспроизведения: %1$s</string>
     <string name="unknown_error">Неизвестная ошибка</string>
+    <string name="add_to_playlist">Добавить в плейлист</string>
+    <string name="zero_time">00:00</string>
+    <string name="empty_playlist_tracks">В этом плейлисте пока нет треков</string>
+    <string name="share">Поделиться</string>
+    <string name="edit_playlist_information">Редактировать информацию</string>
+    <string name="delete_playlist">Удалить плейлист</string>
+    <string name="track_count_one">%1$d трек</string>
+    <string name="track_count_few">%1$d трека</string>
+    <string name="track_count_many">%1$d треков</string>
+    <string name="playlist_not_found">Плейлист не найден</string>
+    <string name="playlist_meta">%1$s · %2$s</string>
+    <string name="playlist_duration_minutes">%1$d мин</string>
+    <string name="edit_playlist">Редактировать</string>
+    <string name="save_playlist">Сохранить</string>
+    <string name="playlist_update_success">Изменения сохранены</string>
+    <string name="playlist_update_error">Не удалось сохранить изменения</string>
+    <string name="playlist_create_error">Не удалось создать плейлист</string>
+    <string name="error_open_app">Не удалось открыть приложение</string>
 
 
+    <!-- Удаление трека -->
+    <string name="delete_track_title">Хотите удалить трек?</string>
+    <string name="yes_uppercase">ДА</string>
+    <string name="no_uppercase">НЕТ</string>
 
+    <!-- Удаление плейлиста -->
+    <string name="delete_playlist_title">Удалить плейлист</string>
+    <string name="delete_playlist_message">Вы уверены, что хотите удалить этот плейлист?</string>
+    <string name="delete">Удалить</string>
 
+    <!-- Поделиться плейлистом -->
+    <string name="share_playlist_empty">В этом плейлисте нет списка треков, которым можно поделиться</string>
+    <string name="share_playlist_chooser">Поделиться плейлистом</string>
+    <string name="playlist_tracks_count">%1$d треков</string>
 
+    <!-- Продолжительность и количество треков -->
+    <plurals name="playlist_track_count">
+        <item quantity="one">%1$d трек</item>
+        <item quantity="few">%1$d трека</item>
+        <item quantity="many">%1$d треков</item>
+        <item quantity="other">%1$d треков</item>
+    </plurals>
+
+    <!-- Ошибки -->
+    <string name="playlist_load_error">Не удалось загрузить плейлист</string>
+    <string name="playlist_track_delete_error">Не удалось удалить трек</string>
+    <string name="playlist_delete_error">Не удалось удалить плейлист</string>
 
 
 </resources>

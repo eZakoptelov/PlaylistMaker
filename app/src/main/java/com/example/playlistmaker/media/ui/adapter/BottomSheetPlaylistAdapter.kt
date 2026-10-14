@@ -1,5 +1,6 @@
 package com.example.playlistmaker.media.ui.adapter
 
+import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
@@ -15,7 +16,7 @@ class BottomSheetPlaylistAdapter(
     private val onClick: (Playlist) -> Unit
 ) : RecyclerView.Adapter<BottomSheetPlaylistAdapter.ViewHolder>() {
 
-    inner class ViewHolder(val binding: ItemPlaylistBottomSheetBinding) :
+    class ViewHolder(val binding: ItemPlaylistBottomSheetBinding) :
         RecyclerView.ViewHolder(binding.root)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -29,7 +30,10 @@ class BottomSheetPlaylistAdapter(
         val playlist = playlists[position]
         with(holder.binding) {
             tvPlaylistName.text = playlist.name
-            tvTrackCount.text = getTrackCountText(playlist.trackCount)
+            tvTrackCount.text = getTrackCountText(
+                playlist.trackCount,
+                root.context
+            )
 
             val radius = (8 * root.context.resources.displayMetrics.density).toInt()
 
@@ -53,18 +57,16 @@ class BottomSheetPlaylistAdapter(
 
     override fun getItemCount(): Int = playlists.size
 
-    fun updatePlaylists(newPlaylists: List<Playlist>) {
-        playlists.clear()
-        playlists.addAll(newPlaylists)
-        notifyDataSetChanged()
-    }
+    private fun getTrackCountText(count: Int, context: Context): String {
+        return when {
+            count % 10 == 1 && count % 100 != 11 ->
+                context.getString(R.string.track_count_one, count)
 
-    private fun getTrackCountText(count: Int): String {
-        val plural = when {
-            count % 10 == 1 && count % 100 != 11 -> "трек"
-            count % 10 in 2..4 && count % 100 !in 12..14 -> "трека"
-            else -> "треков"
+            count % 10 in 2..4 && count % 100 !in 12..14 ->
+                context.getString(R.string.track_count_few, count)
+
+            else ->
+                context.getString(R.string.track_count_many, count)
         }
-        return "$count $plural"
     }
 }
