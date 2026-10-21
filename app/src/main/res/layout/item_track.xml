@@ -9,9 +9,9 @@
 
     <ImageView
         android:id="@+id/artworkIv"
-        android:layout_width="45dp"
-        android:layout_height="45dp"
-        android:layout_marginStart="13dp"
+        android:layout_width="@dimen/layout_width_45"
+        android:layout_height="@dimen/layout_height_45"
+        android:layout_marginStart="@dimen/marginStart_13"
         android:scaleType="fitCenter"
         app:srcCompat="@drawable/ic_placeholder" />
 

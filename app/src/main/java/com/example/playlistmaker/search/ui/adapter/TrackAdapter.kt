@@ -1,6 +1,5 @@
 package com.example.playlistmaker.search.ui.adapter
 
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -32,7 +31,6 @@ class TrackAdapter(
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TrackViewHolder {
-        Log.d("MY_SEARCH", "Создан ViewHolder")
         val view = LayoutInflater.from(parent.context)
             .inflate(R.layout.item_track, parent, false)
         return TrackViewHolder(view)

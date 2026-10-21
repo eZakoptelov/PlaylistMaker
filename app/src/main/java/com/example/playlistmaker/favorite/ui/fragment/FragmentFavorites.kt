@@ -38,18 +38,20 @@ class FragmentFavorites : Fragment() {
             layoutManager = LinearLayoutManager(requireContext())
             adapter = this@FragmentFavorites.adapter
         }
+
         adapter.setOnItemClickListener(object : TrackAdapter.OnItemClickListener {
             override fun onItemClick(track: TrackItem) {
                 val bundle = Bundle().apply {
+                    putLong("trackId", track.trackId)
                     putParcelable("track", track)
                 }
-                findNavController()
-                    .navigate(
-                        R.id.action_mediaFragment_to_playerFragment,
-                        bundle
-                    )
+                findNavController().navigate(
+                    R.id.action_mediaFragment_to_playerFragment,
+                    bundle
+                )
             }
         })
+
 
 
         viewModel.state.observe(viewLifecycleOwner) { state ->
