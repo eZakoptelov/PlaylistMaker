@@ -165,11 +165,11 @@ class PlayerFragment : Fragment() {
     }
 
     private fun setupPlayPauseButton() {
-        binding.buttonPause.setOnCheckedChangeListener { _, isChecked ->
-            if (isChecked) {
-                viewModel.play()
-            } else {
+        binding.buttonPause.setOnClickListener {
+            if (viewModel.state.value?.isPlaying == true) {
                 viewModel.pause()
+            } else {
+                viewModel.play()
             }
         }
     }
@@ -198,12 +198,20 @@ class PlayerFragment : Fragment() {
 
     private fun observeState() {
         viewModel.state.observe(viewLifecycleOwner) { state ->
-            binding.buttonPause.isChecked = state?.isPlaying == true
+
+            binding.buttonPause.setPlaying(
+                state?.isPlaying == true
+            )
+
             binding.currentTimeText.text =
                 viewModel.rules.formatDuration(state?.currentPosition ?: 0)
 
             if (!state?.error.isNullOrBlank()) {
-                Toast.makeText(requireContext(), state.error, Toast.LENGTH_LONG).show()
+                Toast.makeText(
+                    requireContext(),
+                    state.error,
+                    Toast.LENGTH_LONG
+                ).show()
             }
         }
     }
