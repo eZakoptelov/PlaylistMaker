@@ -1,11 +1,13 @@
 package com.example.playlistmaker.search.ui.fragment
 
+import android.content.IntentFilter
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import android.widget.Toast
+import androidx.core.content.ContextCompat
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
@@ -20,6 +22,8 @@ import com.example.playlistmaker.utils.Constants
 import com.example.playlistmaker.utils.debounce
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import androidx.lifecycle.lifecycleScope
+import com.example.playlistmaker.utils.NetworkUtils
+import com.example.playlistmaker.utils.receiver.NetworkChangeReceiver
 
 class SearchFragment : Fragment() {
 
@@ -31,6 +35,12 @@ class SearchFragment : Fragment() {
     private lateinit var historyAdapter: TrackAdapter
     private var isSearchFieldFocused = false
     private lateinit var clickDebounce: (TrackItem) -> Unit
+
+    private val networkChangeReceiver by lazy {
+        NetworkChangeReceiver { context ->
+            NetworkUtils.isInternetAvailable(context)
+        }
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -69,7 +79,15 @@ class SearchFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
+
         binding.historyContainer.visibility = View.GONE
+
+        ContextCompat.registerReceiver(
+            requireContext(),
+            networkChangeReceiver,
+            IntentFilter(NetworkChangeReceiver.ACTION_CONNECTIVITY_CHANGE),
+            ContextCompat.RECEIVER_NOT_EXPORTED
+        )
     }
 
     private fun observeState() {
@@ -220,6 +238,11 @@ class SearchFragment : Fragment() {
         val inputMethodManager =
             requireContext().getSystemService(android.content.Context.INPUT_METHOD_SERVICE) as android.view.inputmethod.InputMethodManager
         inputMethodManager.hideSoftInputFromWindow(view.windowToken, 0)
+    }
+    override fun onPause() {
+        requireContext().unregisterReceiver(networkChangeReceiver)
+
+        super.onPause()
     }
 
     override fun onDestroyView() {
