@@ -19,6 +19,10 @@ import com.example.playlistmaker.search.domain.model.TrackItem
 import com.example.playlistmaker.player.ui.viewmodel.PlayerViewModel
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import android.content.IntentFilter
+import androidx.core.content.ContextCompat
+import com.example.playlistmaker.utils.NetworkUtils
+import com.example.playlistmaker.utils.receiver.NetworkChangeReceiver
 
 class PlayerFragment : Fragment() {
 
@@ -28,7 +32,11 @@ class PlayerFragment : Fragment() {
     private val track by lazy {
         arguments?.getParcelable<TrackItem>("track")
     }
-
+    private val networkChangeReceiver by lazy {
+        NetworkChangeReceiver { context ->
+            NetworkUtils.isInternetAvailable(context)
+        }
+    }
     private lateinit var bottomSheetBehavior: BottomSheetBehavior<LinearLayout>
     private var bottomSheetCallback: BottomSheetBehavior.BottomSheetCallback? = null
     private val bottomSheetAdapter = BottomSheetPlaylistAdapter { playlist ->
@@ -67,6 +75,22 @@ class PlayerFragment : Fragment() {
         observeFavorite()
         observePlaylists()
         observeAddTrackStatus()
+    }
+    override fun onResume() {
+        super.onResume()
+
+        ContextCompat.registerReceiver(
+            requireContext(),
+            networkChangeReceiver,
+            IntentFilter(NetworkChangeReceiver.ACTION_CONNECTIVITY_CHANGE),
+            ContextCompat.RECEIVER_NOT_EXPORTED
+        )
+    }
+
+    override fun onPause() {
+        requireContext().unregisterReceiver(networkChangeReceiver)
+
+        super.onPause()
     }
 
     private fun setupWindowInsets() {
