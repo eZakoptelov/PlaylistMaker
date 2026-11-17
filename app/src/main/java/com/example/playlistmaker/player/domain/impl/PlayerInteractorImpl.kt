@@ -48,7 +48,6 @@ class PlayerInteractorImpl(
             return
         }
         mediaPlayerWrapper.start()
-        // Не вызываем preparedListener здесь — он должен срабатывать только при onPrepared
     }
 
     override fun pause() {
@@ -57,7 +56,7 @@ class PlayerInteractorImpl(
 
     override fun stop() {
         mediaPlayerWrapper.stop()
-        isTrackLoaded = false // Трек больше не «готов» — нужно снова подготовить
+        isTrackLoaded = false
     }
 
     override fun release() {
