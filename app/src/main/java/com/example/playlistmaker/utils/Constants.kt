@@ -10,4 +10,9 @@ object Constants {
     const val UPDATE_INTERVAL_MS = 300L
     const val SEARCH_DEBOUNCE_DELAY = 2000L
     const val CLICK_DEBOUNCE_DELAY = 300L
+    const val TAG = "PlayerService"
+    const val CHANNEL_ID = "playlist_maker_playback"
+    const val NOTIFICATION_ID = 2501
+    const val NOTIFICATION_REQUEST_CODE = 2502
+    const val INVALID_TRACK_ID = -1L
 }
