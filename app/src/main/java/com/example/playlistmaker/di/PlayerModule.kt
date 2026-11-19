@@ -1,34 +1,21 @@
 package com.example.playlistmaker.di
 
-import com.example.playlistmaker.player.data.LocalMediaPlayerImpl
-import com.example.playlistmaker.player.domain.MediaPlayerWrapper
-import com.example.playlistmaker.player.domain.intaractor.PlayerInteractor
-import com.example.playlistmaker.player.domain.impl.PlayerInteractorImpl
-import com.example.playlistmaker.player.domain.impl.PlayerRulesImpl
 import com.example.playlistmaker.player.domain.PlayerRules
+import com.example.playlistmaker.player.domain.impl.PlayerRulesImpl
 import com.example.playlistmaker.player.ui.viewmodel.PlayerViewModel
 import org.koin.android.ext.koin.androidApplication
-import org.koin.dsl.module
 import org.koin.androidx.viewmodel.dsl.viewModel
+import org.koin.dsl.module
 
 val playerModule = module {
 
-    factory { android.media.MediaPlayer() }
-
-    factory<MediaPlayerWrapper> {
-        LocalMediaPlayerImpl(get())
-    }
-
-    single<PlayerRules> { PlayerRulesImpl() }
-
-    factory<PlayerInteractor> {
-        PlayerInteractorImpl(get())
+    single<PlayerRules> {
+        PlayerRulesImpl()
     }
 
     viewModel {
         PlayerViewModel(
-            androidApplication(),
-            interactor = get(),
+            application = androidApplication(),
             rules = get(),
             favoriteInteractor = get(),
             playlistInteractor = get()
